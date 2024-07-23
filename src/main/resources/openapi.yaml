@@ -1,0 +1,1301 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 9lkehu4bs7i54
+info:
+  title: 'Mahashakti '
+  version: '1.0'
+  summary: Mahashakti
+  description: |
+    This is the backend API for Mahashakti
+servers:
+  - url: 'http://localhost:8080'
+    description: Local
+paths:
+  /expense/material:
+    get:
+      summary: Material expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-expense
+      x-stoplight:
+        id: 4towlrjq1nvl1
+      tags:
+        - Expense
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+        - schema:
+            type: string
+          in: query
+          name: createdBy
+    post:
+      summary: Material Expense
+      tags:
+        - Expense
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-material-expense
+      x-stoplight:
+        id: yoqb7qzf7yajc
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MaterialPurchase'
+                x-stoplight:
+                  id: q8wne3wzwhd05
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  '/expense/material/{materialPurchaseId}':
+    parameters:
+      - schema:
+          type: string
+        name: materialPurchaseId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Material expense
+      tags:
+        - Expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-expense-material-materialPurchaseId
+      x-stoplight:
+        id: t4wtj13toc9md
+    put:
+      summary: Material expense
+      tags:
+        - Expense
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-expense-material-materialPurchaseId
+      x-stoplight:
+        id: ac9p5djt00k30
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialPurchase'
+    delete:
+      summary: Material expense
+      tags:
+        - Expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-expense-material-materialPurchaseId
+      x-stoplight:
+        id: 1x6asx2vnhcyg
+  /expense/operation:
+    get:
+      summary: Operation expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-operation-expense
+      tags:
+        - Expense
+      x-stoplight:
+        id: ixxlzcyz9zr8b
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+        - schema:
+            type: string
+          in: query
+          name: createdBy
+    post:
+      summary: Operation Expense
+      tags:
+        - Expense
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-operation-expense
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/OperationExpense'
+                x-stoplight:
+                  id: a0p7s7ribc72z
+      x-stoplight:
+        id: 6y8i7cbj1xsqw
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  '/expense/operation/{operationExpenseId}':
+    parameters:
+      - schema:
+          type: string
+        name: operationExpenseId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Operational expense
+      tags:
+        - Expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-expense-operation-operationalExpenseId
+      x-stoplight:
+        id: n61mkknzy65w8
+    put:
+      summary: Operational expense
+      tags:
+        - Expense
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-expense-operation-operationalExpenseId
+      x-stoplight:
+        id: gosxw5i516za6
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationExpense'
+    delete:
+      summary: Operational expense
+      tags:
+        - Expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-expense-operation-operationalExpenseId
+      x-stoplight:
+        id: 88dd80qdyk3hp
+  /production:
+    get:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-production
+      x-stoplight:
+        id: fvcgmg1yex6en
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+    post:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-production
+      x-stoplight:
+        id: nfhh5twsmlmwe
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Production'
+                x-stoplight:
+                  id: g5qinvoqwpayf
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  '/production/{productionId}':
+    parameters:
+      - schema:
+          type: string
+        name: productionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Production by id
+      tags:
+        - Production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-production-productionId
+      x-stoplight:
+        id: ygtg97a38ra9v
+    delete:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-production-productionId
+      x-stoplight:
+        id: s6r777bflwz53
+    put:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-production-productionId
+      x-stoplight:
+        id: utdz4c8gg7h5i
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Production'
+  /sale:
+    get:
+      summary: Sale
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-sale
+      x-stoplight:
+        id: bvn1jbjtm20qq
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+        - schema:
+            type: string
+          in: query
+          name: vendorId
+        - schema:
+            type: boolean
+          in: query
+          name: paid
+    post:
+      summary: Sale
+      tags:
+        - Sale
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-sale
+      x-stoplight:
+        id: 293nz7ya0fua3
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Sale'
+                x-stoplight:
+                  id: a061lfqna0d5c
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  '/sale/{saleId}':
+    parameters:
+      - schema:
+          type: string
+        name: saleId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Sale by Id
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-sale-saleId
+      x-stoplight:
+        id: eblocm6m0nxtf
+    put:
+      summary: Sale
+      tags:
+        - Sale
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-sale-saleId
+      x-stoplight:
+        id: 5woy0bhioh6wd
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale'
+    delete:
+      summary: Sale
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-sale-saleId
+      x-stoplight:
+        id: u1fey9guoeowt
+  /material/consumption:
+    get:
+      summary: Consumption
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-consumption
+      x-stoplight:
+        id: dno10jqe0ybje
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+      tags:
+        - Material
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+    post:
+      summary: Consumption
+      tags:
+        - Material
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-material-consumption
+      x-stoplight:
+        id: kfr0zfsak7ly7
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MaterialConsumption'
+                x-stoplight:
+                  id: btkiksneugrk8
+  '/material/consumption/{consumptionId}':
+    parameters:
+      - schema:
+          type: string
+        name: consumptionId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Consumption by id
+      tags:
+        - Material
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-consumption-consumptionId
+      x-stoplight:
+        id: xujw7eb8ofko4
+    put:
+      summary: Consumption
+      tags:
+        - Material
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-material-consumption-consumptionId
+      x-stoplight:
+        id: ufijumr4h1a85
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialConsumption'
+    delete:
+      summary: Consumption
+      tags:
+        - Material
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-material-consumption-consumptionId
+      x-stoplight:
+        id: sxl9sx4o2jeju
+  /analytics/material-stock:
+    get:
+      summary: Material stock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-stock
+      x-stoplight:
+        id: xrmphfaceiw96
+      tags:
+        - Analytics
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  /analytics/egg-stock:
+    get:
+      summary: Egg stock
+      tags:
+        - Analytics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-analytics-egg-stock
+      x-stoplight:
+        id: 3p858jlh6pvvg
+  /analytics/projected-profits:
+    get:
+      summary: Projected profits
+      tags:
+        - Analytics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-analytics-projected-profits
+      x-stoplight:
+        id: 7nse9rjm4ofzu
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+  /flock:
+    get:
+      summary: Flock data
+      tags:
+        - Flock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-flock
+      x-stoplight:
+        id: 1cyya6hxqio38
+    post:
+      summary: Flock data
+      tags:
+        - Flock
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-flock
+      x-stoplight:
+        id: 3bgtg87212kkz
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flock'
+    parameters:
+      - schema:
+          type: string
+        in: header
+        name: api-key
+  '/flock/{flockDataId}':
+    parameters:
+      - schema:
+          type: string
+        name: flockDataId
+        in: path
+        required: true
+      - schema:
+          type: string
+        in: header
+        name: api-key
+        required: true
+    get:
+      summary: Flock data by Id
+      tags:
+        - Flock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-flock-flockDataId
+      x-stoplight:
+        id: 83w2qh2kp17z8
+    put:
+      summary: Flock data
+      tags:
+        - Flock
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-flock-flockDataId
+      x-stoplight:
+        id: qe9txlno33f7w
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flock'
+    delete:
+      summary: Flock data
+      tags:
+        - Flock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-flock-flockDataId
+      x-stoplight:
+        id: s4iffy0tn5sbl
+  /users/signup:
+    post:
+      summary: Users
+      tags:
+        - Users
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-users-signup
+      x-stoplight:
+        id: dn68nxj1kgrv8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUp'
+components:
+  schemas:
+    MaterialPurchase:
+      title: MaterialPurchase
+      x-stoplight:
+        id: mz1y5yyp5ny19
+      type: object
+      required:
+        - materialId
+        - purchaseDate
+        - rate
+        - quantity
+        - amount
+        - createdBy
+        - unitId
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: xk0e9by2girce
+          format: uuid
+        materialId:
+          type: string
+          x-stoplight:
+            id: y19k5jpy9tj81
+          minLength: 1
+        purchaseDate:
+          type: string
+          x-stoplight:
+            id: nbj373ykz8czc
+          format: date
+        rate:
+          type: number
+          x-stoplight:
+            id: 4qfxgjfczemr6
+          minimum: 1
+        quantity:
+          type: number
+          x-stoplight:
+            id: tsxxlr7q747zw
+        amount:
+          type: number
+          x-stoplight:
+            id: mz3pz4mecjk2l
+          minimum: 1
+        createdBy:
+          type: string
+          x-stoplight:
+            id: 88auw0xja8ftl
+        unitId:
+          type: string
+          x-stoplight:
+            id: 5p5jf3zaql67g
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: m4pj3np0ggfa3
+        createdAt:
+          type: string
+          x-stoplight:
+            id: e22x7dobg8ny5
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: hpesd906mjq0l
+          format: date-time
+    OperationExpense:
+      title: OperationExpense
+      x-stoplight:
+        id: tpwv330jafwj6
+      type: object
+      required:
+        - itemId
+        - amount
+        - expenseDate
+        - createdBy
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: txu325bzk88i9
+          format: uuid
+        itemId:
+          type: string
+          x-stoplight:
+            id: l2hrfkqqoez82
+          minLength: 1
+        amount:
+          type: number
+          x-stoplight:
+            id: ibqi1tr4mo2nt
+          minimum: 1
+        expenseDate:
+          type: string
+          x-stoplight:
+            id: kazpovzpr29fr
+          format: date
+        createdBy:
+          type: string
+          x-stoplight:
+            id: wiryjd1s8guhv
+          minLength: 1
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: 85hyugqb9kptm
+          format: date-time
+        createdAt:
+          type: string
+          x-stoplight:
+            id: 5765i4ye8gqft
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: hjziv0xjj4eet
+          format: date-time
+    Sale:
+      title: Sale
+      x-stoplight:
+        id: hpbxoc7m3pvee
+      type: object
+      required:
+        - soldCount
+        - rate
+        - quantity
+        - amount
+        - paid
+        - vendorId
+        - saleDate
+        - createdBy
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: ryt00m1b8al7w
+          format: uuid
+        soldCount:
+          type: integer
+          x-stoplight:
+            id: gfhjyic42nc9w
+          minimum: 1
+        rate:
+          type: number
+          x-stoplight:
+            id: 011zffnku9pmu
+          minimum: 1
+        quantity:
+          type: number
+          x-stoplight:
+            id: tvl7npt5sofd9
+        amount:
+          type: number
+          x-stoplight:
+            id: 63fgo68synhzo
+          minimum: 1
+        paid:
+          type: boolean
+          x-stoplight:
+            id: 3yy2fatpwkg1e
+        vendorId:
+          type: integer
+          x-stoplight:
+            id: plxt4ikk8myio
+        saleDate:
+          type: string
+          x-stoplight:
+            id: 5nor99vnvv0bq
+          format: date
+        createdBy:
+          type: string
+          x-stoplight:
+            id: 4ad0tuikw8i2t
+          minLength: 1
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: 5yjzo00r186hl
+        createdAt:
+          type: string
+          x-stoplight:
+            id: q2k4y4kwbsu8o
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: 0ljyhovun8syl
+          format: date-time
+    Production:
+      title: Production
+      x-stoplight:
+        id: bqo1ne5tmfh17
+      type: object
+      required:
+        - producedCount
+        - brokenCount
+        - saleableCount
+        - productionDate
+        - createdBy
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: scq8doecodhgw
+          format: uuid
+        producedCount:
+          type: integer
+          x-stoplight:
+            id: v2g99vder7z13
+          minimum: 1
+        productionPercentage:
+          type: number
+          x-stoplight:
+            id: wbyjivl40800j
+        brokenCount:
+          type: integer
+          x-stoplight:
+            id: dri5aubu001ok
+          minimum: 0
+        brokenReason:
+          type: string
+          x-stoplight:
+            id: ancza80784c16
+        saleableCount:
+          type: integer
+          x-stoplight:
+            id: y1ecyugpmbcmv
+          minimum: 1
+        productionDate:
+          type: string
+          x-stoplight:
+            id: 3uoqwp2uvtu0r
+          format: date
+        createdBy:
+          type: string
+          x-stoplight:
+            id: kq1mjldain8ky
+          minLength: 1
+    MaterialConsumption:
+      title: MaterialConsumption
+      x-stoplight:
+        id: dr14lvzd9b6v6
+      type: object
+      required:
+        - materialId
+        - quantity
+        - unitId
+        - consumptionDate
+        - createdBy
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: zppaukcxdjs6p
+          format: uuid
+        materialId:
+          type: string
+          x-stoplight:
+            id: 6gxb5tj16n0ir
+        quantity:
+          type: string
+          x-stoplight:
+            id: 7y0tv2ug3d26l
+        unitId:
+          type: string
+          x-stoplight:
+            id: 5u4pg2lqrzr4a
+        consumptionDate:
+          type: string
+          x-stoplight:
+            id: i30d6l303thzm
+        createdBy:
+          type: string
+          x-stoplight:
+            id: o20br55nj0zvk
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: i46gd01ou0oty
+        createdAt:
+          type: string
+          x-stoplight:
+            id: x4nrwhjq05qje
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: 2qh2l2tdnrtkn
+          format: date-time
+    MaterialInStock:
+      title: MaterialInStock
+      x-stoplight:
+        id: k0jieuvhmcefs
+      type: object
+      required:
+        - materialName
+        - quantity
+        - unit
+        - lastPurchaseDate
+      properties:
+        materialName:
+          type: string
+          x-stoplight:
+            id: w0ruhjho2k13d
+        quantity:
+          type: string
+          x-stoplight:
+            id: 6wcqkd69j3yrn
+        unit:
+          type: string
+          x-stoplight:
+            id: 12djtcxo5f83d
+        lastPurchaseDate:
+          type: string
+          x-stoplight:
+            id: 9gkdn70j9b81c
+    EggInStock:
+      title: EggInStock
+      x-stoplight:
+        id: 6ia7cgkq9q9bd
+      type: object
+      required:
+        - numberOfEggs
+      properties:
+        numberOfEggs:
+          type: integer
+          x-stoplight:
+            id: 0hkswo3jmbkkc
+    ProjectedProfits:
+      title: ProjectedProfits
+      x-stoplight:
+        id: 2yfv0qw218tnt
+      type: object
+      properties:
+        amount:
+          type: number
+          x-stoplight:
+            id: 32ygcaut69rxf
+        credits:
+          type: number
+          x-stoplight:
+            id: b4l63qcysvspj
+    Flock:
+      title: Flock
+      x-stoplight:
+        id: jphaakg071nhk
+      type: object
+      required:
+        - count
+        - added
+        - remarks
+        - addedDate
+        - createdBy
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: ctljv6sqopv98
+          format: uuid
+        count:
+          type: integer
+          x-stoplight:
+            id: muulflqpfxglk
+        added:
+          type: boolean
+          x-stoplight:
+            id: gtl6vg38d32fp
+        remarks:
+          type: string
+          x-stoplight:
+            id: tsp1c70j17qsz
+          minLength: 1
+        addedDate:
+          type: string
+          x-stoplight:
+            id: wz8s6q48emkgz
+          format: date
+        createdBy:
+          type: string
+          x-stoplight:
+            id: xwm1sxtivf9hj
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: j90z1kxmf54xn
+        createdAt:
+          type: string
+          x-stoplight:
+            id: 17mi5n2h0pzho
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: yuwnpf7yevqr7
+          format: date-time
+    MahashaktiResponse:
+      title: MahashaktiResponse
+      x-stoplight:
+        id: jphaaki071nhk
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: string
+          x-stoplight:
+            id: hipywlmelrcq3
+        code:
+          type: string
+          x-stoplight:
+            id: 8ypec70o5tzzg
+        message:
+          type: string
+          x-stoplight:
+            id: zyuq40clge9vx
+        errorMessage:
+          type: string
+          x-stoplight:
+            id: jxxg3ddcjc17k
+        data:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/MaterialPurchase'
+                x-stoplight:
+                  id: m5pxklaa2rgzi
+              - $ref: '#/components/schemas/OperationExpense'
+                x-stoplight:
+                  id: xfs816qxq6q5w
+              - $ref: '#/components/schemas/Production'
+                x-stoplight:
+                  id: vkiebredlt2ny
+              - $ref: '#/components/schemas/Sale'
+                x-stoplight:
+                  id: liycxcp6m5uis
+              - $ref: '#/components/schemas/MaterialConsumption'
+                x-stoplight:
+                  id: 2nm8jg2np1zt0
+              - $ref: '#/components/schemas/MaterialInStock'
+                x-stoplight:
+                  id: tduof0y7pinzo
+              - $ref: '#/components/schemas/EggInStock'
+                x-stoplight:
+                  id: m78nnsemmumfi
+              - $ref: '#/components/schemas/ProjectedProfits'
+                x-stoplight:
+                  id: yjvckj8len3o9
+              - $ref: '#/components/schemas/Flock'
+                x-stoplight:
+                  id: h3paiedj5fa2i
+            x-stoplight:
+              id: k55ysh4yqznnr
+    SignUp:
+      title: SignUp
+      x-stoplight:
+        id: fa2vlr0ripdt8
+      type: object
+      description: ''
+      required:
+        - name
+        - role
+        - email
+        - password
+        - phoneNumber
+        - status
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: bm4lbzzql8jil
+          format: uuid
+        name:
+          type: string
+          x-stoplight:
+            id: 90fg7pne2gwid
+        role:
+          type: string
+          x-stoplight:
+            id: pkzinyur8m5g0
+          default: VIEWER
+        email:
+          type: string
+          x-stoplight:
+            id: tuo5mrvjh5j1t
+          format: email
+        password:
+          type: string
+          x-stoplight:
+            id: vnouskz55eto4
+        phoneNumber:
+          type: string
+          x-stoplight:
+            id: 5rfte77hft6gr
+        status:
+          x-stoplight:
+            id: 5sb0kcq2bzuwt
+          type: string
+          default: ACTIVE
+  requestBodies: {}
+  responses: {}
