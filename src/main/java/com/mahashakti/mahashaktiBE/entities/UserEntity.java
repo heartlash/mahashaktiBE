@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 import lombok.Data;
 
@@ -13,10 +14,10 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "users")
-public class Users {
+public class UserEntity {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -35,7 +36,7 @@ public class Users {
     @Column(name = "phone_number", length = 20, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Column(name = "status", length = 20, nullable = false)
+    private String status;
 
 }

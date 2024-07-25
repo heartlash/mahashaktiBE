@@ -21,7 +21,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-expense
+      operationId: get-all-material-expense
       x-stoplight:
         id: 4towlrjq1nvl1
       tags:
@@ -66,23 +66,13 @@ paths:
                 x-stoplight:
                   id: q8wne3wzwhd05
       parameters: []
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   '/expense/material/{materialPurchaseId}':
     parameters:
       - schema:
           type: string
         name: materialPurchaseId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Material expense
@@ -142,7 +132,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-operation-expense
+      operationId: get-all-operation-expense
       tags:
         - Expense
       x-stoplight:
@@ -186,23 +176,13 @@ paths:
                   id: a0p7s7ribc72z
       x-stoplight:
         id: 6y8i7cbj1xsqw
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   '/expense/operation/{operationExpenseId}':
     parameters:
       - schema:
           type: string
         name: operationExpenseId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Operational expense
@@ -302,23 +282,13 @@ paths:
                 $ref: '#/components/schemas/Production'
                 x-stoplight:
                   id: g5qinvoqwpayf
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   '/production/{productionId}':
     parameters:
       - schema:
           type: string
         name: productionId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Production by id
@@ -426,23 +396,13 @@ paths:
                 $ref: '#/components/schemas/Sale'
                 x-stoplight:
                   id: a061lfqna0d5c
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   '/sale/{saleId}':
     parameters:
       - schema:
           type: string
         name: saleId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Sale by Id
@@ -502,7 +462,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-consumption
+      operationId: get-all-material-consumption
       x-stoplight:
         id: dno10jqe0ybje
       parameters:
@@ -518,11 +478,7 @@ paths:
           name: endDate
       tags:
         - Material
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
+    parameters: []
     post:
       summary: Consumption
       tags:
@@ -553,11 +509,6 @@ paths:
           type: string
         name: consumptionId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Consumption by id
@@ -622,12 +573,7 @@ paths:
         id: xrmphfaceiw96
       tags:
         - Analytics
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   /analytics/egg-stock:
     get:
       summary: Egg stock
@@ -669,12 +615,7 @@ paths:
             format: date
           in: query
           name: endDate
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
-        required: true
+    parameters: []
   /flock:
     get:
       summary: Flock data
@@ -710,22 +651,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Flock'
-    parameters:
-      - schema:
-          type: string
-        in: header
-        name: api-key
+    parameters: []
   '/flock/{flockDataId}':
     parameters:
       - schema:
           type: string
         name: flockDataId
         in: path
-        required: true
-      - schema:
-          type: string
-        in: header
-        name: api-key
         required: true
     get:
       summary: Flock data by Id
@@ -777,7 +709,7 @@ paths:
         id: s4iffy0tn5sbl
   /users/signup:
     post:
-      summary: Users
+      summary: Signup
       tags:
         - Users
       responses:
@@ -796,6 +728,311 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SignUp'
+  /users/login:
+    post:
+      summary: Login
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-users-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      x-stoplight:
+        id: sm4aq3eqz53x4
+    parameters: []
+  /admin/material:
+    post:
+      summary: add material
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-admin-add-material
+      x-stoplight:
+        id: nub2rd8ywkdd2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Material'
+    parameters: []
+  '/admin/material/{materialId}':
+    parameters:
+      - schema:
+          type: integer
+        name: materialId
+        in: path
+        required: true
+    delete:
+      summary: material
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-admin-remove-material
+      x-stoplight:
+        id: avvmi86nn2gzg
+    put:
+      summary: material
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-admin-material-materialId
+      x-stoplight:
+        id: bep58jkqpaar5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Material'
+  /admin/unit:
+    post:
+      summary: add unit
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-admin-add-unit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Unit'
+      x-stoplight:
+        id: a3g82l40105e8
+    parameters: []
+  '/admin/unit/{unitId}':
+    parameters:
+      - schema:
+          type: integer
+        name: unitId
+        in: path
+        required: true
+    delete:
+      summary: unit
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-admin-unit-unitId
+      x-stoplight:
+        id: nj3qu925t8ama
+    put:
+      summary: unit
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-admin-unit-unitId
+      x-stoplight:
+        id: fmzryl96e4bgc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Unit'
+  /admin/vendor:
+    post:
+      summary: add vendor
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-admin-add-vendor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+      x-stoplight:
+        id: lysjy97tdhvi4
+    parameters: []
+  '/admin/vendor/{vendorId}':
+    parameters:
+      - schema:
+          type: integer
+        name: vendorId
+        in: path
+        required: true
+    delete:
+      summary: vendor
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-admin-vendor-vendorId
+      x-stoplight:
+        id: blwi0eqpufn3h
+    put:
+      summary: vendor
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-admin-vendor-vendorId
+      x-stoplight:
+        id: u3ssw2xpitmr5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+  /admin/operational-expense-item:
+    post:
+      summary: add operational expense item
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-admin-add-operational-expense-item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationalExpenseItem'
+      x-stoplight:
+        id: bt3jnp6zs4ojr
+    parameters: []
+  '/admin/operational-expense-item/{itemId}':
+    parameters:
+      - schema:
+          type: integer
+        name: itemId
+        in: path
+        required: true
+    delete:
+      summary: operational expense item
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-admin-operational-expense-item-itemId
+      x-stoplight:
+        id: y1dp6fetawske
+    put:
+      summary: operational expense item
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-admin-operational-expense-item-itemId
+      x-stoplight:
+        id: wog6zcv9lj6bz
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationalExpenseItem'
+  /data/materials:
+    get:
+      summary: material
+      tags:
+        - Data
+      responses: {}
+      operationId: get-data-material
+      x-stoplight:
+        id: 35iilqwqebbxu
+    parameters: []
+  /data/units:
+    get:
+      summary: units
+      tags:
+        - Data
+      responses: {}
+      operationId: get-data-units
+      x-stoplight:
+        id: 0o29tm82xpsan
+    parameters: []
+  /data/vendors:
+    get:
+      summary: vendors
+      tags:
+        - Data
+      responses: {}
+      operationId: get-data-vendors
+      x-stoplight:
+        id: gpbod9vz929ad
+    parameters: []
+  /data/operational-expense-items:
+    get:
+      summary: operational expense items
+      tags:
+        - Data
+      responses: {}
+      operationId: get-data-operational-expense-items
+      x-stoplight:
+        id: pn8lbv0oensed
+    parameters: []
 components:
   schemas:
     MaterialPurchase:
@@ -1218,10 +1455,10 @@ components:
           type: string
           x-stoplight:
             id: jxxg3ddcjc17k
-        data:
+        whoop:
           type: array
           items:
-            anyOf:
+            oneOf:
               - $ref: '#/components/schemas/MaterialPurchase'
                 x-stoplight:
                   id: m5pxklaa2rgzi
@@ -1249,14 +1486,32 @@ components:
               - $ref: '#/components/schemas/Flock'
                 x-stoplight:
                   id: h3paiedj5fa2i
+              - $ref: '#/components/schemas/Material'
+                x-stoplight:
+                  id: wcqbpd9i7r75e
+              - $ref: '#/components/schemas/Vendor'
+                x-stoplight:
+                  id: fwop83o71ehjv
+              - $ref: '#/components/schemas/Unit'
+                x-stoplight:
+                  id: 98rsmeoicg1mc
+              - $ref: '#/components/schemas/OperationalExpenseItem'
+                x-stoplight:
+                  id: b121jiomgbhgw
+              - $ref: '#/components/schemas/Login'
+                x-stoplight:
+                  id: xqk2yhrhv7bnh
             x-stoplight:
               id: k55ysh4yqznnr
+        data:
+          type: object
+          x-stoplight:
+            id: 5x8bayc5tc2ck
     SignUp:
       title: SignUp
       x-stoplight:
         id: fa2vlr0ripdt8
       type: object
-      description: ''
       required:
         - name
         - role
@@ -1297,5 +1552,112 @@ components:
             id: 5sb0kcq2bzuwt
           type: string
           default: ACTIVE
+    Material:
+      title: Material
+      x-stoplight:
+        id: 4zbuuqus1gkap
+      type: object
+      required:
+        - name
+        - unitId
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: cm869ko1lajr5
+        name:
+          type: string
+          x-stoplight:
+            id: ylz7taqpzxvfa
+        unitId:
+          type: integer
+          x-stoplight:
+            id: 5wt5sv2lm0jnb
+    Vendor:
+      title: Vendor
+      x-stoplight:
+        id: 3scl46bjdfy87
+      type: object
+      description: ''
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: 7iq2skhf692ma
+        name:
+          type: string
+          x-stoplight:
+            id: 7zehuv4htg1yx
+        phoneNumber:
+          type: string
+          x-stoplight:
+            id: ftlp7nke9w69o
+        address:
+          type: string
+          x-stoplight:
+            id: 0kpb696h1kukc
+    Unit:
+      title: Unit
+      x-stoplight:
+        id: a7pkr6r0mr5kq
+      type: object
+      required:
+        - name
+        - symbol
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: c2puhajcfqrdy
+        name:
+          type: string
+          x-stoplight:
+            id: wt8rk8dxsbcin
+        symbol:
+          type: string
+          x-stoplight:
+            id: 5t80n454j8xww
+    OperationalExpenseItem:
+      title: OperationalExpenseItem
+      x-stoplight:
+        id: 1t1l5jdmkvr1h
+      type: object
+      required:
+        - item
+        - remarks
+      properties:
+        id:
+          type: integer
+          x-stoplight:
+            id: ezw3wwiyxyxux
+        item:
+          type: string
+          x-stoplight:
+            id: 8lxngngtyfgf5
+        remarks:
+          type: string
+          x-stoplight:
+            id: w5gws7nma8fkp
+    Login:
+      title: Login
+      x-stoplight:
+        id: q9mjfvxn9eqah
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          x-stoplight:
+            id: 9wsqrue6tla0i
+        password:
+          type: string
+          x-stoplight:
+            id: x6d0tako06n28
+        accessToken:
+          type: string
+          x-stoplight:
+            id: ipcb9acxhove2
   requestBodies: {}
   responses: {}

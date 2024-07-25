@@ -1,23 +1,23 @@
 CREATE TABLE operational_expense_items (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY ,
     item VARCHAR(100) NOT NULL,
     remarks VARCHAR(200)
 );
 
 CREATE TABLE units (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    symbol VARCHAR NOT NULL
+    id SERIAL PRIMARY KEY ,
+    name VARCHAR(20) NOT NULL,
+    symbol VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE materials (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     unit_id INTEGER REFERENCES units(id)
 );
 
 CREATE TABLE vendors (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
     address VARCHAR(200) NOT NULL
@@ -28,9 +28,9 @@ CREATE TABLE users (
     name VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
-    status BOOLEAN NOT NULL
+    status VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE flocks (
