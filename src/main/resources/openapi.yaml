@@ -11,7 +11,7 @@ servers:
   - url: 'http://localhost:8080'
     description: Local
 paths:
-  /expense/material:
+  /material/purchase:
     get:
       summary: Material expense
       responses:
@@ -21,11 +21,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-all-material-expense
+      operationId: get-all-material-purchase
       x-stoplight:
         id: 4towlrjq1nvl1
       tags:
-        - Expense
+        - MaterialPurchase
       parameters:
         - schema:
             type: string
@@ -46,7 +46,7 @@ paths:
     post:
       summary: Material Expense
       tags:
-        - Expense
+        - MaterialPurchase
       responses:
         '201':
           description: Created
@@ -54,7 +54,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-material-expense
+      operationId: post-material-purchase
       x-stoplight:
         id: yoqb7qzf7yajc
       requestBody:
@@ -69,7 +69,7 @@ paths:
                   id: q8wne3wzwhd05
       parameters: []
     parameters: []
-  '/expense/material/{materialPurchaseId}':
+  '/material/purchase/{materialPurchaseId}':
     parameters:
       - schema:
           type: string
@@ -80,7 +80,7 @@ paths:
     get:
       summary: Material expense
       tags:
-        - Expense
+        - MaterialPurchase
       responses:
         '200':
           description: OK
@@ -88,13 +88,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-expense-materialPurchaseId
+      operationId: get-material-purchase-materialPurchaseId
       x-stoplight:
         id: t4wtj13toc9md
     put:
       summary: Material expense
       tags:
-        - Expense
+        - MaterialPurchase
       responses:
         '202':
           description: Accepted
@@ -102,7 +102,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: put-material-expense-materialPurchaseId
+      operationId: put-material-purchase-materialPurchaseId
       x-stoplight:
         id: ac9p5djt00k30
       requestBody:
@@ -113,8 +113,6 @@ paths:
               $ref: '#/components/schemas/MaterialPurchase'
     delete:
       summary: Material expense
-      tags:
-        - Expense
       responses:
         '200':
           description: OK
@@ -122,10 +120,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: delete-material-expense-materialPurchaseId
+      operationId: delete-material-purchase-materialPurchaseId
       x-stoplight:
         id: 1x6asx2vnhcyg
-  '/expense/material/materialId/{materialId}':
+      tags:
+        - MaterialPurchase
+  '/material/purchase/materialId/{materialId}':
     parameters:
       - schema:
           type: integer
@@ -135,7 +135,7 @@ paths:
     get:
       summary: Material expense
       tags:
-        - Expense
+        - MaterialPurchase
       responses:
         '200':
           description: OK
@@ -143,12 +143,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-expense-materialId
+      operationId: get-material-purchase-materialId
       x-stoplight:
         id: ffkib5lupx544
-  /expense/operation:
+  /operational-expense:
     get:
-      summary: Operation expense
+      summary: Operational expense
       responses:
         '200':
           description: OK
@@ -156,9 +156,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-all-operation-expense
+      operationId: get-all-operational-expense
       tags:
-        - Expense
+        - OperationalExpense
       x-stoplight:
         id: ixxlzcyz9zr8b
       parameters:
@@ -181,7 +181,7 @@ paths:
     post:
       summary: Operation Expense
       tags:
-        - Expense
+        - OperationalExpense
       responses:
         '201':
           description: Created
@@ -189,7 +189,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-operation-expense
+      operationId: post-operational-expense
       requestBody:
         description: Shared Request
         content:
@@ -203,7 +203,7 @@ paths:
       x-stoplight:
         id: 6y8i7cbj1xsqw
     parameters: []
-  '/expense/operation/{OperationalExpenseId}':
+  '/operational-expense/{OperationalExpenseId}':
     parameters:
       - schema:
           type: string
@@ -213,8 +213,6 @@ paths:
         required: true
     get:
       summary: Operational expense
-      tags:
-        - Expense
       responses:
         '200':
           description: OK
@@ -222,13 +220,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-operation-expense-operationalExpenseId
+      operationId: get-operational-expense-operationalExpenseId
       x-stoplight:
         id: n61mkknzy65w8
+      tags:
+        - OperationalExpense
     put:
       summary: Operational expense
-      tags:
-        - Expense
       responses:
         '202':
           description: Accepted
@@ -236,7 +234,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: put-operation-expense-operationalExpenseId
+      operationId: put-operational-expense-operationalExpenseId
       x-stoplight:
         id: gosxw5i516za6
       requestBody:
@@ -245,10 +243,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OperationalExpense'
+      tags:
+        - OperationalExpense
     delete:
       summary: Operational expense
       tags:
-        - Expense
+        - OperationalExpense
       responses:
         '200':
           description: OK
@@ -256,7 +256,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: delete-operation-expense-operationalExpenseId
+      operationId: delete-operational-expense-operationalExpenseId
       x-stoplight:
         id: 88dd80qdyk3hp
   /production:

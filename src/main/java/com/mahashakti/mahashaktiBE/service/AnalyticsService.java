@@ -22,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnalyticsService {
 
-    private final ExpenseService expenseService;
+    private final MaterialPurchaseService materialPurchaseService;
+    private final OperationalExpenseService operationalExpenseService;
     private final SaleService saleService;
 
     private final DataService dataService;
@@ -35,9 +36,9 @@ public class AnalyticsService {
         // get all profits and credit data from sales;
         // return sale - expenses
 
-        BigDecimal materialPurchaseExpenseAmount = expenseService.getAllMaterialPurchaseExpenses(startDate, endDate, null)
+        BigDecimal materialPurchaseExpenseAmount = materialPurchaseService.getAllMaterialPurchaseExpenses(startDate, endDate, null)
                         .stream().map(MaterialPurchaseEntity::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal operationalExpenseAmount = expenseService.getAllOperationalExpenses(startDate, endDate, null)
+        BigDecimal operationalExpenseAmount = operationalExpenseService.getAllOperationalExpenses(startDate, endDate, null)
                 .stream().map(OperationalExpenseEntity::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal saleAmount = BigDecimal.ZERO;
