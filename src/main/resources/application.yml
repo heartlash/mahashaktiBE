@@ -1,0 +1,63 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /mahashakti
+  tomcat:
+    uri-encoding: UTF-8
+  max-http-header-size: 64KB
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    path: /swagger-ui-custom.html
+    operationsSorter=method:
+
+# Implement JLog
+logging:
+  level:
+    root: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.apache.kafka.clients.Metadata: ERROR
+    org.springframework.security: DEBUG
+
+datasource:
+  url: jdbc:postgresql://localhost:5432/mahashakti
+  driverClassName: org.postgresql.Driver
+  username: aniket
+  password: admin
+  initializationMode: never
+  platform: postgres
+  dbcp2:
+    validationQuery: SELECT 1
+  hikari:
+    maximumPoolSize: 20
+    minimumPoolSize: 20
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+
+
+management:
+  server:
+    port: 8080
+  health:
+    ping:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+      metrics:
+        id: metrics
+        enabled: true
+        sensitive: false
+
