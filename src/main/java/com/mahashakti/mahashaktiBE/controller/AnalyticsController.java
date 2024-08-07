@@ -3,6 +3,7 @@ package com.mahashakti.mahashaktiBE.controller;
 import com.mahashakti.mahashaktiBE.service.AnalyticsService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.AnalyticsApi;
+import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
@@ -42,10 +43,14 @@ public class AnalyticsController implements AnalyticsApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
     public ResponseEntity<MahashaktiResponse> getAnalyticsEggStock() {
-        //analyticsService.test();
-        return null;
+
+        EggCount eggCount = analyticsService.getAnalyticsEggStock();
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Egg Stock FETCHED", "SUCCESS", eggCount);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
 }

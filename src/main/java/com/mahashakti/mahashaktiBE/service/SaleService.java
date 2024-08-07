@@ -56,6 +56,15 @@ public class SaleService {
         return saleEntityOptional.get();
     }
 
+    public List<SaleEntity> getSaleLatest() {
+        Optional<SaleEntity> saleEntityOptionalLatest = saleRepository.findTopByOrderBySaleDateDesc();
+        if(saleEntityOptionalLatest.isEmpty())
+            throw new ResourceNotFoundException("Latest Sale Resource Not Found %s");
+
+        return getAllSale(saleEntityOptionalLatest.get().getSaleDate(), saleEntityOptionalLatest.get().getSaleDate(), null, null);
+    }
+
+
     public SaleEntity putSaleById(UUID saleId, Sale sale) {
 
         if(!saleId.equals(sale.getId()))

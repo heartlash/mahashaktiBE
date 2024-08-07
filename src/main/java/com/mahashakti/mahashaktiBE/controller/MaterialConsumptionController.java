@@ -4,7 +4,7 @@ package com.mahashakti.mahashaktiBE.controller;
 import com.mahashakti.mahashaktiBE.entities.MaterialConsumptionEntity;
 import com.mahashakti.mahashaktiBE.service.MaterialConsumptionService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
-import com.mahashakti.mahashaktiBe.api.MaterialApi;
+import com.mahashakti.mahashaktiBe.api.MaterialConsumptionApi;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.MaterialConsumption;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class MaterialConsumptionController implements MaterialApi {
+public class MaterialConsumptionController implements MaterialConsumptionApi {
 
     private final MaterialConsumptionService materialConsumptionService;
     @Override
@@ -54,9 +54,10 @@ public class MaterialConsumptionController implements MaterialApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
+    // TODO
     @Override
     public ResponseEntity<MahashaktiResponse> getMaterialConsumptionMaterialId(Integer materialId) {
-        return MaterialApi.super.getMaterialConsumptionMaterialId(materialId);
+        return null;
     }
 
     @Override

@@ -31,7 +31,4 @@ public class MaterialEntity implements Serializable {
     @JoinColumn(name = "unit_id", referencedColumnName = "id", nullable = false)
     private UnitEntity unit;
 
-    @Column(name = "sku", nullable = false)
-    private BigDecimal sku;
-
 }

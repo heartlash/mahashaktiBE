@@ -14,7 +14,13 @@ CREATE TABLE materials (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
     unit_id INTEGER REFERENCES units(id),
-    sku DOUBLE PRECISION NOT NULL DEFAULT 0
+);
+
+CREATE TABLE material_stock (
+    material_id INTEGER PRIMARY KEY REFERENCES materials(id),
+    quantity DOUBLE PRECISION NOT NULL,
+    min_quantity DOUBLE PRECISION NOT NULL,
+    last_purchase_date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE vendors (

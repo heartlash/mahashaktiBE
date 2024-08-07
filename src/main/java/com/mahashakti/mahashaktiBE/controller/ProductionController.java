@@ -1,6 +1,7 @@
 package com.mahashakti.mahashaktiBE.controller;
 
 import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
+import com.mahashakti.mahashaktiBE.service.AnalyticsService;
 import com.mahashakti.mahashaktiBE.service.ProductionService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.ProductionApi;
@@ -74,6 +75,16 @@ public class ProductionController implements ProductionApi {
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Production DELETED", "SUCCESS", null);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getProductionLatest() {
+        ProductionEntity productionEntity = productionService.getProductionLatest();
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Production Latest Fetched", "SUCCESS", productionEntity);
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }

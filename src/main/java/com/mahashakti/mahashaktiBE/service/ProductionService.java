@@ -25,6 +25,7 @@ public class ProductionService {
 
     private final ProductionRepository productionRepository;
     private final FlockService flockService;
+    private final AnalyticsService analyticsService;
 
     public List<ProductionEntity> getAllProduction(Date startDate, Date endDate) {
         return productionRepository.findByProductionDateBetween(startDate, endDate);
@@ -43,7 +44,9 @@ public class ProductionService {
 
         productionEntity.setProductionPercentage(calculateProductionPercentage(production.getProducedCount()));
 
-        return productionRepository.save(productionEntity);
+        ProductionEntity productionEntitySaved = productionRepository.save(productionEntity);
+        analyticsService.incrementEggStockCount(saleableCount);
+        return productionEntitySaved;
     }
 
     public ProductionEntity getProductionById(UUID productionId) {
@@ -54,12 +57,22 @@ public class ProductionService {
         return productionEntityOptional.get();
     }
 
+    public ProductionEntity getProductionLatest() {
+        Optional<ProductionEntity> productionEntityOptionalLatest = productionRepository.findTopByOrderByProductionDateDesc();
+        if(productionEntityOptionalLatest.isEmpty())
+            throw new ResourceNotFoundException("Latest Production Resource Not Found %s");
+
+        return productionEntityOptionalLatest.get();
+    }
+
     public ProductionEntity putProductionById(UUID productionId, Production production) {
 
         if(!productionId.equals(production.getId()))
             throw new MismatchException("Production Resource ID Mismatch in Put Request");
 
         ProductionEntity productionEntityInDb = getProductionById(productionId);
+        analyticsService.decrementEggStockCount(productionEntityInDb.getSaleableCount());
+
         BeanUtils.copyProperties(production, productionEntityInDb, "createdBy", "createdAt");
 
         int saleableCount = production.getProducedCount() - production.getBrokenCount() - production.getSelfUseCount()
@@ -69,12 +82,14 @@ public class ProductionService {
         productionEntityInDb.setSaleableCount(saleableCount);
 
         productionEntityInDb.setProductionPercentage(calculateProductionPercentage(production.getProducedCount()));
+        analyticsService.incrementEggStockCount(productionEntityInDb.getSaleableCount());
 
         return productionRepository.save(productionEntityInDb);
     }
 
     public void deleteProductionById(UUID productionId) {
-        getProductionById(productionId);
+        ProductionEntity productionEntity = getProductionById(productionId);
+        analyticsService.decrementEggStockCount(productionEntity.getSaleableCount());
         productionRepository.deleteById(productionId);
     }
 

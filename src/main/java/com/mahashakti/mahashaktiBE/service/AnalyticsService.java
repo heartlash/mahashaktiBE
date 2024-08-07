@@ -2,19 +2,21 @@ package com.mahashakti.mahashaktiBE.service;
 
 import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseEntity;
+import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
-import com.mahashakti.mahashaktiBE.utils.Helper;
-import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
+import com.mahashakti.mahashaktiBE.repository.ProductionRepository;
+import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
@@ -25,9 +27,11 @@ public class AnalyticsService {
     private final MaterialPurchaseService materialPurchaseService;
     private final OperationalExpenseService operationalExpenseService;
     private final SaleService saleService;
-
+    private final ProductionRepository productionRepository;
     private final DataService dataService;
 
+
+    private Integer currentEggStockCount = 0;
 
     public ProjectedProfits getAnalyticsProjectedProfits(Date startDate, Date endDate) {
 
@@ -36,7 +40,7 @@ public class AnalyticsService {
         // get all profits and credit data from sales;
         // return sale - expenses
 
-        BigDecimal materialPurchaseExpenseAmount = materialPurchaseService.getAllMaterialPurchaseExpenses(startDate, endDate, null)
+        BigDecimal materialPurchaseExpenseAmount = materialPurchaseService.getAllMaterialPurchases(startDate, endDate, null)
                         .stream().map(MaterialPurchaseEntity::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal operationalExpenseAmount = operationalExpenseService.getAllOperationalExpenses(startDate, endDate, null)
                 .stream().map(OperationalExpenseEntity::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -65,22 +69,42 @@ public class AnalyticsService {
     }
 
     public List<MaterialInStock> getMaterialInStock() {
-        return dataService.getMaterials().stream().map(materialEntity -> {
+        return dataService.getMaterialStock().stream().map(materialStockEntity -> {
             MaterialInStock materialInStock = new MaterialInStock();
-            materialInStock.setMaterialId(materialEntity.getId());
-            materialInStock.setMaterial(materialEntity.getName());
-            materialInStock.setUnit(materialEntity.getUnit().getName());
-            materialInStock.setUnitId(materialEntity.getUnit().getId());
-            materialInStock.setQuantity(materialEntity.getSku());
+            materialInStock.setMaterialId(materialStockEntity.getMaterialId());
+            materialInStock.setMaterial(materialStockEntity.getMaterial().getName());
+            materialInStock.setUnit(materialStockEntity.getMaterial().getUnit().getName());
+            materialInStock.setUnitId(materialStockEntity.getMaterial().getUnit().getId());
+            materialInStock.setQuantity(materialStockEntity.getQuantity());
+            materialInStock.setLastPurchaseDate(materialStockEntity.getLastPurchaseDate());
             return materialInStock;
         }).toList();
     }
 
-    public ResponseEntity<MahashaktiResponse> getAnalyticsEggStock() {
-        MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Sale FETCHED", "SUCCESS", null);
+    @PostConstruct
+    public EggCount getAnalyticsEggStock() {
+        if(currentEggStockCount <= 0) {
+            Integer saleableProductionCount = productionRepository.findByProductionDateBetween(
+                    new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
+                    .stream()
+                    .map(ProductionEntity::getSaleableCount)
+                    .reduce(0, Integer::sum);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+            Integer soldCount = saleService.getAllSale(
+                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date(), null, null)
+                    .stream().mapToInt(SaleEntity::getSoldCount).sum();
+
+            currentEggStockCount = saleableProductionCount - soldCount;
+        }
+        return new EggCount(currentEggStockCount);
+    }
+
+    public void incrementEggStockCount(Integer increaseCount) {
+        currentEggStockCount+=increaseCount;
+    }
+
+    public void decrementEggStockCount(Integer decreaseCount) {
+        currentEggStockCount-=decreaseCount;
     }
 
 }

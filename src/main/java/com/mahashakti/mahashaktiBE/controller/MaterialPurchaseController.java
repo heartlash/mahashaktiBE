@@ -25,7 +25,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
     @Override
     public ResponseEntity<MahashaktiResponse> getAllMaterialPurchase(Date startDate, Date endDate, String createdBy) {
         List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService
-                .getAllMaterialPurchaseExpenses(startDate, endDate, createdBy);
+                .getAllMaterialPurchases(startDate, endDate, createdBy);
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Expense FETCHED", "SUCCESS", materialPurchaseEntityList);
@@ -36,7 +36,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
     @Override
     public ResponseEntity<MahashaktiResponse> postMaterialPurchase(List<MaterialPurchase> materialPurchase) {
 
-        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.postMaterialPurchaseExpenses(materialPurchase);
+        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.postMaterialPurchases(materialPurchase);
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE201", "Material Expense ADDED", "SUCCESS", materialPurchaseEntityList);
@@ -45,7 +45,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> getMaterialPurchaseMaterialPurchaseId(UUID materialPurchaseId) {
-        MaterialPurchaseEntity materialPurchaseEntity = materialPurchaseService.getMaterialPurchaseExpenseById(materialPurchaseId);
+        MaterialPurchaseEntity materialPurchaseEntity = materialPurchaseService.getMaterialPurchaseById(materialPurchaseId);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Expense FETCHED", "SUCCESS", materialPurchaseEntity);
 
@@ -53,7 +53,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> getMaterialPurchaseMaterialId(Integer materialId) {
-        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.getMaterialPurchaseExpenseByMaterialId(materialId);
+        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.getMaterialPurchaseByMaterialId(materialId);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Expense FETCHED", "SUCCESS", materialPurchaseEntityList);
 
@@ -61,7 +61,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> putMaterialPurchaseMaterialPurchaseId(UUID materialPurchaseId, MaterialPurchase materialPurchase) {
-        MaterialPurchaseEntity materialPurchaseEntity = materialPurchaseService.putMaterialPurchaseExpenseById(materialPurchaseId, materialPurchase);
+        MaterialPurchaseEntity materialPurchaseEntity = materialPurchaseService.putMaterialPurchaseById(materialPurchaseId, materialPurchase);
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE202", "Material Expense UPDATED", "SUCCESS", materialPurchaseEntity);
@@ -70,7 +70,7 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> deleteMaterialPurchaseMaterialPurchaseId(UUID materialPurchaseId) {
-        materialPurchaseService.deleteMaterialPurchaseExpenseById(materialPurchaseId);
+        materialPurchaseService.deleteMaterialPurchaseById(materialPurchaseId);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Expense DELETED", "SUCCESS", null);
 

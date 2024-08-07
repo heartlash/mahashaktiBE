@@ -146,6 +146,136 @@ paths:
       operationId: get-material-purchase-materialId
       x-stoplight:
         id: ffkib5lupx544
+  /material/consumption:
+    get:
+      summary: Consumption
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-all-material-consumption
+      x-stoplight:
+        id: dno10jqe0ybje
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
+      tags:
+        - MaterialConsumption
+    parameters: []
+    post:
+      summary: Consumption
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-material-consumption
+      x-stoplight:
+        id: kfr0zfsak7ly7
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MaterialConsumption'
+                x-stoplight:
+                  id: btkiksneugrk8
+      tags:
+        - MaterialConsumption
+  '/material/consumption/{consumptionId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: consumptionId
+        in: path
+        required: true
+    get:
+      summary: Consumption by id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-consumption-consumptionId
+      x-stoplight:
+        id: xujw7eb8ofko4
+      tags:
+        - MaterialConsumption
+    put:
+      summary: Consumption
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-material-consumption-consumptionId
+      x-stoplight:
+        id: ufijumr4h1a85
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialConsumption'
+      tags:
+        - MaterialConsumption
+    delete:
+      summary: Consumption
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-material-consumption-consumptionId
+      x-stoplight:
+        id: sxl9sx4o2jeju
+      tags:
+        - MaterialConsumption
+  '/material/consumption/materialId/{materialId}':
+    parameters:
+      - schema:
+          type: integer
+        name: materialId
+        in: path
+        required: true
+    get:
+      summary: Consumption by material id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-consumption-materialId
+      x-stoplight:
+        id: 950qan3xizuqt
+      tags:
+        - MaterialConsumption
   /operational-expense:
     get:
       summary: Operational expense
@@ -308,6 +438,23 @@ paths:
             schema:
               $ref: '#/components/schemas/Production'
     parameters: []
+  /production/latest:
+    get:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-production-latest
+      parameters: []
+      x-stoplight:
+        id: w2v0tjosljo2p
+    parameters: []
   '/production/{productionId}':
     parameters:
       - schema:
@@ -425,6 +572,23 @@ paths:
                 x-stoplight:
                   id: a061lfqna0d5c
     parameters: []
+  /sale/latest:
+    get:
+      summary: Sale
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-sale-latest
+      parameters: []
+      x-stoplight:
+        id: 4e71u1sidqcmf
+    parameters: []
   '/sale/{saleId}':
     parameters:
       - schema:
@@ -481,136 +645,6 @@ paths:
       operationId: delete-sale-saleId
       x-stoplight:
         id: u1fey9guoeowt
-  /material/consumption:
-    get:
-      summary: Consumption
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-all-material-consumption
-      x-stoplight:
-        id: dno10jqe0ybje
-      parameters:
-        - schema:
-            type: string
-            format: date
-          in: query
-          name: startDate
-          required: true
-        - schema:
-            type: string
-            format: date
-          in: query
-          name: endDate
-          required: true
-      tags:
-        - Material
-    parameters: []
-    post:
-      summary: Consumption
-      tags:
-        - Material
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-material-consumption
-      x-stoplight:
-        id: kfr0zfsak7ly7
-      requestBody:
-        description: Shared Request
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/MaterialConsumption'
-                x-stoplight:
-                  id: btkiksneugrk8
-  '/material/consumption/{consumptionId}':
-    parameters:
-      - schema:
-          type: string
-          format: uuid
-        name: consumptionId
-        in: path
-        required: true
-    get:
-      summary: Consumption by id
-      tags:
-        - Material
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-consumption-consumptionId
-      x-stoplight:
-        id: xujw7eb8ofko4
-    put:
-      summary: Consumption
-      tags:
-        - Material
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: put-material-consumption-consumptionId
-      x-stoplight:
-        id: ufijumr4h1a85
-      requestBody:
-        description: Shared Request
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MaterialConsumption'
-    delete:
-      summary: Consumption
-      tags:
-        - Material
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: delete-material-consumption-consumptionId
-      x-stoplight:
-        id: sxl9sx4o2jeju
-  '/material/consumption/materialId/{materialId}':
-    parameters:
-      - schema:
-          type: integer
-        name: materialId
-        in: path
-        required: true
-    get:
-      summary: Consumption by material id
-      tags:
-        - Material
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-material-consumption-materialId
-      x-stoplight:
-        id: 950qan3xizuqt
   /analytics/material-stock:
     get:
       summary: Material stock
@@ -1628,6 +1662,16 @@ components:
       properties:
         count:
           type: integer
+    EggCount:
+      title: EggCount
+      x-stoplight:
+        id: 502ht73430jls
+      type: object
+      required:
+        - count
+      properties:
+        count:
+          type: integer
     MahashaktiResponse:
       title: MahashaktiResponse
       x-stoplight:
@@ -1850,13 +1894,21 @@ components:
           type: string
           x-stoplight:
             id: 9wsqrue6tla0i
-        password:
+        name:
           type: string
           x-stoplight:
-            id: x6d0tako06n28
+            id: ws6pvimv90rbf
         accessToken:
           type: string
           x-stoplight:
             id: ipcb9acxhove2
+        role:
+          type: string
+          x-stoplight:
+            id: cuk6cuxjo32gn
+        password:
+          type: string
+          x-stoplight:
+            id: x6d0tako06n28
   requestBodies: {}
   responses: {}

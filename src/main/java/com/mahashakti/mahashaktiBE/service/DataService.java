@@ -4,11 +4,13 @@ import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
+import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.OperationalExpenseItemRepository;
 import com.mahashakti.mahashaktiBE.repository.UnitRepository;
 import com.mahashakti.mahashaktiBE.repository.VendorRepository;
+import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class DataService {
     private final VendorRepository vendorRepository;
     private final MaterialRepository materialRepository;
     private final OperationalExpenseItemRepository operationalExpenseItemRepository;
+    private final MaterialStockRepository materialStockRepository;
 
 
     public List<MaterialEntity> getMaterials() {
@@ -65,6 +68,22 @@ public class DataService {
         Optional<VendorEntity> vendorEntityOptional = vendorRepository.findById(vendorId);
         if(vendorEntityOptional.isEmpty())
             throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
-        return vendorEntityOptional.get();    }
+        return vendorEntityOptional.get();
+    }
+
+    public List<MaterialStockEntity> getMaterialStock() {
+        List<MaterialStockEntity> materialStockEntityList = materialStockRepository.findAll();
+        if(materialStockEntityList.isEmpty())
+            throw new ResourceNotFoundException("Material Stock Resource Not Found");
+        return materialStockEntityList;
+    }
+
+
+    public MaterialStockEntity getMaterialStockById(Integer materialId) {
+        Optional<MaterialStockEntity> materialStockEntityOptional = materialStockRepository.findById(materialId);
+        if(materialStockEntityOptional.isEmpty())
+            throw new ResourceNotFoundException("Material Stock Resource Not Found");
+        return materialStockEntityOptional.get();
+    }
 
 }

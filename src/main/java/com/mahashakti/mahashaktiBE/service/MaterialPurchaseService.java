@@ -3,12 +3,12 @@ package com.mahashakti.mahashaktiBE.service;
 
 import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
+import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
 import com.mahashakti.mahashaktiBE.exception.MahashaktiException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialPurchaseRepository;
-import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
-import com.mahashakti.mahashaktiBE.repository.OperationalExpenseRepository;
+import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
 import com.mahashakti.mahashaktiBe.model.MaterialPurchase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.Date;
+import java.util.Objects;
+import java.util.ArrayList;
+
+
+
+
 import java.util.stream.Collectors;
 
 @Service
@@ -27,15 +36,15 @@ public class MaterialPurchaseService {
 
     private final MaterialPurchaseRepository materialPurchaseRepository;
     private final DataService dataService;
-    private final MaterialRepository materialRepository;
+    private final MaterialStockRepository materialStockRepository;
 
 
-    public List<MaterialPurchaseEntity> getAllMaterialPurchaseExpenses(Date startDate, Date endDate, String createdBy) {
+    public List<MaterialPurchaseEntity> getAllMaterialPurchases(Date startDate, Date endDate, String createdBy) {
         if(Objects.isNull(createdBy)) return materialPurchaseRepository.findByPurchaseDateBetween(startDate, endDate);
         else return materialPurchaseRepository.findByPurchaseDateBetweenAndCreatedBy(startDate, endDate, createdBy);
     }
 
-    public MaterialPurchaseEntity getMaterialPurchaseExpenseById(UUID materialPurchaseId) {
+    public MaterialPurchaseEntity getMaterialPurchaseById(UUID materialPurchaseId) {
         Optional<MaterialPurchaseEntity> materialPurchaseEntityOptional = materialPurchaseRepository.findById(materialPurchaseId);
         if(materialPurchaseEntityOptional.isEmpty())
             throw new ResourceNotFoundException(String.format("Material Expense Resource Not Found: %s", materialPurchaseId.toString()));
@@ -43,7 +52,7 @@ public class MaterialPurchaseService {
         return materialPurchaseEntityOptional.get();
     }
 
-    public List<MaterialPurchaseEntity> getMaterialPurchaseExpenseByMaterialId(Integer materialId) {
+    public List<MaterialPurchaseEntity> getMaterialPurchaseByMaterialId(Integer materialId) {
         List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseRepository.findByMaterialId(materialId);
         if(materialPurchaseEntityList.isEmpty())
             throw new ResourceNotFoundException(String.format("Material Expense Resource Not Found with Material Id: %d", materialId));
@@ -53,20 +62,22 @@ public class MaterialPurchaseService {
 
 
     @Transactional
-    public List<MaterialPurchaseEntity> postMaterialPurchaseExpenses(List<MaterialPurchase> materialPurchases) {
+    public List<MaterialPurchaseEntity> postMaterialPurchases(List<MaterialPurchase> materialPurchases) {
 
-        List<MaterialEntity> materialEntityList = new ArrayList<>();
+        List<MaterialStockEntity> materialStockEntityList = new ArrayList<>();
 
         List<MaterialPurchaseEntity> materialPurchaseEntityList =  materialPurchases.stream()
                 .map(materialPurchase -> {
                     MaterialPurchaseEntity materialPurchaseEntity = new MaterialPurchaseEntity();
                     try {
                         BeanUtils.copyProperties(materialPurchase, materialPurchaseEntity);
-                        MaterialEntity materialEntity = dataService.getMaterialById(materialPurchase.getMaterialId());
-
-                        materialEntity.setSku(materialEntity.getSku().add(materialPurchase.getQuantity()));
-                        materialPurchaseEntity.setMaterial(materialEntity);
-                        materialEntityList.add(materialEntity);
+                        MaterialEntity material = dataService.getMaterialById(materialPurchase.getMaterialId());
+                        materialPurchaseEntity.setMaterial(material);
+                        MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialPurchase.getMaterialId());
+                        materialStockEntity.setQuantity(materialStockEntity.getQuantity().add(materialPurchase.getQuantity()));
+                        materialStockEntity.setLastPurchaseDate(new Date());
+                        materialStockEntity.setMaterial(material);
+                        materialStockEntityList.add(materialStockEntity);
                     } catch (Exception e) {
                         throw new MahashaktiException();
                     }
@@ -74,46 +85,47 @@ public class MaterialPurchaseService {
                 })
                 .collect(Collectors.toList());
 
-        materialRepository.saveAll(materialEntityList);
+        materialStockRepository.saveAll(materialStockEntityList);
 
         return materialPurchaseRepository.saveAll(materialPurchaseEntityList);
 
     }
 
-    public MaterialPurchaseEntity putMaterialPurchaseExpenseById(UUID materialPurchaseId, MaterialPurchase materialPurchase) {
+    @Transactional
+    public MaterialPurchaseEntity putMaterialPurchaseById(UUID materialPurchaseId, MaterialPurchase materialPurchase) {
         if(!materialPurchaseId.equals(materialPurchase.getId()))
             throw new MismatchException("Material Purchase Expense ID Mismatch in Put Request");
 
-        MaterialPurchaseEntity materialPurchaseEntityInDb = getMaterialPurchaseExpenseById(materialPurchaseId);
+        MaterialPurchaseEntity materialPurchaseEntityInDb = getMaterialPurchaseById(materialPurchaseId);
 
-
+        MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialPurchase.getMaterialId());
         if(!materialPurchaseEntityInDb.getQuantity().equals(materialPurchase.getQuantity())) {
-            MaterialEntity materialEntity = dataService.getMaterialById(materialPurchase.getMaterialId());
 
-            materialEntity.setSku(materialEntity.getSku()
-                    .subtract(materialPurchaseEntityInDb.getMaterial().getSku())
+            materialStockEntity.setQuantity(materialStockEntity.getQuantity()
+                    .subtract(materialPurchaseEntityInDb.getQuantity())
                     .add(materialPurchase.getQuantity()));
-            materialPurchaseEntityInDb.setMaterial(materialEntity);
-            materialRepository.save(materialEntity);
         }
 
         BeanUtils.copyProperties(materialPurchase, materialPurchaseEntityInDb, "createdBy", "createdAt");
 
-        if(!materialPurchaseEntityInDb.getMaterial().getId().equals(materialPurchase.getMaterialId()))
-            materialPurchaseEntityInDb.setMaterial(dataService.getMaterialById(materialPurchase.getMaterialId()));
+        if(!materialPurchaseEntityInDb.getMaterial().getId().equals(materialPurchase.getMaterialId())) {
+            MaterialEntity materialEntity = dataService.getMaterialById(materialPurchase.getMaterialId());
+            materialPurchaseEntityInDb.setMaterial(materialEntity);
+            materialStockEntity.setMaterial(materialEntity);
+        }
 
-
+        materialStockRepository.save(materialStockEntity);
         return materialPurchaseRepository.save(materialPurchaseEntityInDb);
 
     }
 
     @Transactional
-    public void deleteMaterialPurchaseExpenseById(UUID materialPurchaseId) {
-        MaterialPurchaseEntity materialPurchaseEntity = getMaterialPurchaseExpenseById(materialPurchaseId);
-        MaterialEntity materialEntity = dataService.getMaterialById(materialPurchaseEntity.getMaterial().getId());
+    public void deleteMaterialPurchaseById(UUID materialPurchaseId) {
+        MaterialPurchaseEntity materialPurchaseEntity = getMaterialPurchaseById(materialPurchaseId);
+        MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialPurchaseEntity.getMaterial().getId());
 
-        materialEntity.setSku(materialEntity.getSku().subtract(materialPurchaseEntity.getQuantity()));
-        materialRepository.save(materialEntity);
+        materialStockEntity.setQuantity(materialStockEntity.getQuantity().subtract(materialPurchaseEntity.getQuantity()));
+        materialStockRepository.save(materialStockEntity);
         materialPurchaseRepository.deleteById(materialPurchaseId);
     }
 

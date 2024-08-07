@@ -68,5 +68,16 @@ public class SaleController implements SaleApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Sale DELETED", "SUCCESS", null);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);      }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getSaleLatest() {
+        List<SaleEntity> saleEntity = saleService.getSaleLatest();
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Latest Sale Fetched", "SUCCESS", saleEntity);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 }

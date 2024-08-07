@@ -44,7 +44,10 @@ public class UsersService {
 
         if(authentication.isAuthenticated()) {
             String generatedToken = jwtService.generateToken(myUsersDetailService.loadUserByUsername(login.getUsername()));
+            UserEntity userEntity = userRepository.findByEmail(login.getUsername()).get();
             login.setAccessToken(generatedToken);
+            login.setName(userEntity.getName());
+            login.setRole(userEntity.getRole());
             login.setPassword(null);
             return login;
         }
