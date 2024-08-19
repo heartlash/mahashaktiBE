@@ -52,8 +52,8 @@ public class MaterialPurchaseService {
         return materialPurchaseEntityOptional.get();
     }
 
-    public List<MaterialPurchaseEntity> getMaterialPurchaseByMaterialId(Integer materialId) {
-        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseRepository.findByMaterialId(materialId);
+    public List<MaterialPurchaseEntity> getMaterialPurchaseByMaterialId(Integer materialId, Date startDate, Date endDate) {
+        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseRepository.findByPurchaseDateBetweenAndMaterialId(startDate, endDate, materialId);
         if(materialPurchaseEntityList.isEmpty())
             throw new ResourceNotFoundException(String.format("Material Expense Resource Not Found with Material Id: %d", materialId));
 

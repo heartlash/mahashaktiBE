@@ -73,8 +73,8 @@ public class MaterialConsumptionService {
         return materialConsumptionEntityOptional.get();
     }
 
-    public List<MaterialConsumptionEntity> getMaterialConsumptionByMaterialId(Integer materialId) {
-        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionRepository.findByMaterialId(materialId);
+    public List<MaterialConsumptionEntity> getMaterialConsumptionByMaterialId(Integer materialId, Date startDate, Date endDate) {
+        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionRepository.findByConsumptionDateBetweenAndMaterialId(startDate, endDate, materialId);
         if(materialConsumptionEntityList.isEmpty())
             throw new ResourceNotFoundException(String.format("Material Consumption Resource Not Found with materialId %d", materialId));
 

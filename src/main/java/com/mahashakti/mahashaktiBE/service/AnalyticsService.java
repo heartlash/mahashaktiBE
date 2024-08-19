@@ -5,6 +5,7 @@ import com.mahashakti.mahashaktiBE.entities.OperationalExpenseEntity;
 import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
 import com.mahashakti.mahashaktiBE.repository.ProductionRepository;
+import com.mahashakti.mahashaktiBE.repository.SaleRepository;
 import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
@@ -26,7 +27,7 @@ public class AnalyticsService {
 
     private final MaterialPurchaseService materialPurchaseService;
     private final OperationalExpenseService operationalExpenseService;
-    private final SaleService saleService;
+    private final SaleRepository saleRepository;
     private final ProductionRepository productionRepository;
     private final DataService dataService;
 
@@ -48,7 +49,7 @@ public class AnalyticsService {
         BigDecimal saleAmount = BigDecimal.ZERO;
         BigDecimal creditAmount = BigDecimal.ZERO;
 
-        List<SaleEntity> sales = saleService.getAllSale(startDate, endDate, null, null);
+        List<SaleEntity> sales = saleRepository.findBySaleDateBetween(startDate, endDate);
 
         for (SaleEntity saleEntity : sales) {
             if (!saleEntity.getPaid())
@@ -84,14 +85,14 @@ public class AnalyticsService {
     @PostConstruct
     public EggCount getAnalyticsEggStock() {
         if(currentEggStockCount <= 0) {
-            Integer saleableProductionCount = productionRepository.findByProductionDateBetween(
+            Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(
                     new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
                     .stream()
                     .map(ProductionEntity::getSaleableCount)
                     .reduce(0, Integer::sum);
 
-            Integer soldCount = saleService.getAllSale(
-                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date(), null, null)
+            Integer soldCount = saleRepository.findBySaleDateBetween(
+                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
                     .stream().mapToInt(SaleEntity::getSoldCount).sum();
 
             currentEggStockCount = saleableProductionCount - soldCount;

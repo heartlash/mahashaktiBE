@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 @Service
@@ -25,6 +26,7 @@ public class SaleService {
 
     private final SaleRepository saleRepository;
     private final DataService dataService;
+    private final AnalyticsService analyticsService;
 
     public List<SaleEntity> getAllSale(Date startDate, Date endDate, Integer vendorId, Boolean paid) {
         if(Objects.isNull(vendorId) && Objects.isNull(paid)) return saleRepository.findBySaleDateBetween(startDate, endDate);
@@ -37,14 +39,15 @@ public class SaleService {
 
     @Transactional
     public List<SaleEntity> postSale(List<Sale> sales) {
-
+        AtomicReference<Integer> totalSoldCount = new AtomicReference<>(0);
         List<SaleEntity> saleEntityList = sales.stream().map(sale -> {
             SaleEntity saleEntity = new SaleEntity();
             BeanUtils.copyProperties(sale, saleEntity);
             saleEntity.setVendor(dataService.getVendorById(sale.getVendorId()));
+            totalSoldCount.updateAndGet(v -> v + saleEntity.getSoldCount());
             return saleEntity;
         }).toList();
-
+        analyticsService.decrementEggStockCount(totalSoldCount.get());
         return saleRepository.saveAll(saleEntityList);
     }
 
@@ -71,18 +74,26 @@ public class SaleService {
             throw new MismatchException("Sale Resource ID Mismatch in Put Request");
 
         SaleEntity saleEntityInDb = getSaleById(saleId);
+        Integer soldCountBefore = saleEntityInDb.getSoldCount();
 
         BeanUtils.copyProperties(sale, saleEntityInDb, "createdBy", "createdAt");
 
         if(!sale.getVendorId().equals(saleEntityInDb.getVendor().getId()))
             saleEntityInDb.setVendor(dataService.getVendorById(sale.getVendorId()));
 
-        return saleRepository.save(saleEntityInDb);
+        SaleEntity saleEntitySaved = saleRepository.save(saleEntityInDb);
+
+        if(!saleEntitySaved.getSoldCount().equals(soldCountBefore)) {
+            analyticsService.incrementEggStockCount(soldCountBefore);
+            analyticsService.decrementEggStockCount(saleEntitySaved.getSoldCount());
+        }
+        return saleEntitySaved;
     }
 
     public void deleteSaleById(UUID saleId) {
-        getSaleById(saleId);
+        SaleEntity saleEntity = getSaleById(saleId);
         saleRepository.deleteById(saleId);
+        analyticsService.incrementEggStockCount(saleEntity.getSoldCount());
     }
 
 }

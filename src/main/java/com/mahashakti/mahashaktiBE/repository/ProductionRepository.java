@@ -11,6 +11,7 @@ import java.util.Date;
 
 @Repository
 public interface ProductionRepository extends JpaRepository<ProductionEntity, UUID> {
-    List<ProductionEntity> findByProductionDateBetween(Date startDate, Date endDate);
+    List<ProductionEntity> findByProductionDateBetweenOrderByProductionDateAsc(Date startDate, Date endDate);
     Optional<ProductionEntity> findTopByOrderByProductionDateDesc();
+    Optional<ProductionEntity> findByProductionDate(Date productionDate);
 }

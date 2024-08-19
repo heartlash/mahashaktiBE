@@ -71,7 +71,6 @@ CREATE TABLE sale (
     id UUID PRIMARY KEY,
     sold_count INTEGER NOT NULL,
     rate DOUBLE PRECISION NOT NULL,
-    quantity DOUBLE PRECISION NOT NULL,
     amount DOUBLE PRECISION NOT NULL,
     paid BOOLEAN NOT NULL,
     vendor_id INTEGER REFERENCES vendors(id),

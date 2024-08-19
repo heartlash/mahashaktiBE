@@ -52,8 +52,8 @@ public class MaterialPurchaseController implements MaterialPurchaseApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
 
     @Override
-    public ResponseEntity<MahashaktiResponse> getMaterialPurchaseMaterialId(Integer materialId) {
-        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.getMaterialPurchaseByMaterialId(materialId);
+    public ResponseEntity<MahashaktiResponse> getMaterialPurchaseMaterialId(Integer materialId, Date startDate, Date endDate) {
+        List<MaterialPurchaseEntity> materialPurchaseEntityList = materialPurchaseService.getMaterialPurchaseByMaterialId(materialId, startDate, endDate);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Expense FETCHED", "SUCCESS", materialPurchaseEntityList);
 

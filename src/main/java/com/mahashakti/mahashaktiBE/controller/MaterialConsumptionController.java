@@ -2,6 +2,7 @@ package com.mahashakti.mahashaktiBE.controller;
 
 
 import com.mahashakti.mahashaktiBE.entities.MaterialConsumptionEntity;
+import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
 import com.mahashakti.mahashaktiBE.service.MaterialConsumptionService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.MaterialConsumptionApi;
@@ -54,11 +55,13 @@ public class MaterialConsumptionController implements MaterialConsumptionApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
-    // TODO
     @Override
-    public ResponseEntity<MahashaktiResponse> getMaterialConsumptionMaterialId(Integer materialId) {
-        return null;
-    }
+    public ResponseEntity<MahashaktiResponse> getMaterialConsumptionMaterialId(Integer materialId, Date startDate, Date endDate) {
+        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionService.getMaterialConsumptionByMaterialId(materialId, startDate, endDate);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Material Expense FETCHED", "SUCCESS", materialConsumptionEntityList);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+}
 
     @Override
     public ResponseEntity<MahashaktiResponse> putMaterialConsumptionConsumptionId(UUID consumptionId, MaterialConsumption materialConsumption) {

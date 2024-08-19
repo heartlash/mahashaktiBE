@@ -11,5 +11,5 @@ public interface MaterialPurchaseRepository extends JpaRepository<MaterialPurcha
 
     List<MaterialPurchaseEntity> findByPurchaseDateBetween(Date startDate, Date endDate);
     List<MaterialPurchaseEntity> findByPurchaseDateBetweenAndCreatedBy(Date startDate, Date endDate, String createdBy);
-    List<MaterialPurchaseEntity> findByMaterialId(Integer materialId);
+    List<MaterialPurchaseEntity> findByPurchaseDateBetweenAndMaterialId(Date startDate, Date endDate, Integer materialId);
 }

@@ -28,10 +28,12 @@ public class ProductionService {
     private final AnalyticsService analyticsService;
 
     public List<ProductionEntity> getAllProduction(Date startDate, Date endDate) {
-        return productionRepository.findByProductionDateBetween(startDate, endDate);
+        return productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(startDate, endDate);
     }
 
     public ProductionEntity postProduction(Production production) {
+        Optional<ProductionEntity> productionEntityOptional = productionRepository.findByProductionDate(production.getProductionDate());
+        if(productionEntityOptional.isPresent()) throw new InvalidDataStateException("Production Data Already Present");
         ProductionEntity productionEntity = new ProductionEntity();
 
         BeanUtils.copyProperties(production, productionEntity);
