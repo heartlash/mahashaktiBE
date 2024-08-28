@@ -40,7 +40,7 @@ public class MaterialPurchaseService {
 
 
     public List<MaterialPurchaseEntity> getAllMaterialPurchases(Date startDate, Date endDate, String createdBy) {
-        if(Objects.isNull(createdBy)) return materialPurchaseRepository.findByPurchaseDateBetween(startDate, endDate);
+        if(Objects.isNull(createdBy)) return materialPurchaseRepository.findByPurchaseDateBetweenOrderByPurchaseDateAsc(startDate, endDate);
         else return materialPurchaseRepository.findByPurchaseDateBetweenAndCreatedBy(startDate, endDate, createdBy);
     }
 
@@ -76,6 +76,7 @@ public class MaterialPurchaseService {
                         MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialPurchase.getMaterialId());
                         materialStockEntity.setQuantity(materialStockEntity.getQuantity().add(materialPurchase.getQuantity()));
                         materialStockEntity.setLastPurchaseDate(new Date());
+                        materialStockEntity.setLastPurchaseRate(materialPurchase.getRate());
                         materialStockEntity.setMaterial(material);
                         materialStockEntityList.add(materialStockEntity);
                     } catch (Exception e) {

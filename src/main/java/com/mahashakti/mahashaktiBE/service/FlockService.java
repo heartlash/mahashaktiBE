@@ -4,6 +4,7 @@ import com.mahashakti.mahashaktiBE.entities.FlockEntity;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.FlockRepository;
+import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.Flock;
 import com.mahashakti.mahashaktiBe.model.FlockCount;
 import jakarta.annotation.PostConstruct;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class FlockService {
 
     private final FlockRepository flockRepository;
+    private final MaterialStockCalculator materialStockCalculator;
 
     public Integer flockCount = 0;
 
@@ -35,13 +37,15 @@ public class FlockService {
         FlockEntity flockEntitySaved = flockRepository.save(flockEntity);
 
         flockCount+=flockEntity.getCount();
+        materialStockCalculator.updateMinimumStockQuantity(flockCount);
+
         return flockEntitySaved;
     }
 
     public FlockEntity getFlock(UUID flockDataId) {
         Optional<FlockEntity> flockEntityOptional = flockRepository.findById(flockDataId);
         if(flockEntityOptional.isEmpty())
-            throw new ResourceNotFoundException(String.format("Flock Resource Not Found: %s", flockDataId.toString()));
+            throw new ResourceNotFoundException(String.format("Flock Resource Not Found: %s", flockDataId));
 
         return flockEntityOptional.get();
     }
@@ -54,6 +58,7 @@ public class FlockService {
         FlockEntity flockEntity = getFlock(flockDataID);
         flockRepository.deleteById(flockDataID);
         flockCount-=flockEntity.getCount();
+        materialStockCalculator.updateMinimumStockQuantity(flockCount);
     }
 
     public FlockEntity updateFlock(UUID flockDataId, Flock flock) {
@@ -74,6 +79,7 @@ public class FlockService {
         else flockCount = flockCount + Math.abs(prevCount);
 
         flockCount += flockEntityInDb.getCount();
+        materialStockCalculator.updateMinimumStockQuantity(flockCount);
 
         return flockEntitySaved;
     }

@@ -12,9 +12,10 @@ import java.util.List;
 public interface SaleRepository extends JpaRepository<SaleEntity, UUID> {
 
     List<SaleEntity> findBySaleDateBetween(Date startDate, Date endDate);
-    List<SaleEntity> findBySaleDateBetweenAndVendorId(Date startDate, Date endDate, Integer vendorId);
-    List<SaleEntity> findBySaleDateBetweenAndVendorIdAndPaid(Date startDate, Date endDate, Integer vendorId, Boolean paid);
-    List<SaleEntity> findBySaleDateBetweenAndPaid(Date startDate, Date endDate, Boolean paid);
+    List<SaleEntity> findBySaleDateBetweenOrderBySaleDateAsc(Date startDate, Date endDate);
+    List<SaleEntity> findBySaleDateBetweenAndVendorIdOrderBySaleDateAsc(Date startDate, Date endDate, Integer vendorId);
+    List<SaleEntity> findBySaleDateBetweenAndVendorIdAndPaidOrderBySaleDateAsc(Date startDate, Date endDate, Integer vendorId, Boolean paid);
+    List<SaleEntity> findBySaleDateBetweenAndPaidOrderBySaleDateAsc(Date startDate, Date endDate, Boolean paid);
     Optional<SaleEntity> findTopByOrderBySaleDateDesc();
 
 }

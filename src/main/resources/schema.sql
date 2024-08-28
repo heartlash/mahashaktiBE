@@ -20,7 +20,8 @@ CREATE TABLE material_stock (
     material_id INTEGER PRIMARY KEY REFERENCES materials(id),
     quantity DOUBLE PRECISION NOT NULL,
     min_quantity DOUBLE PRECISION NOT NULL,
-    last_purchase_date TIMESTAMP NOT NULL
+    last_purchase_date TIMESTAMP NOT NULL,
+    last_purchase_rate DOUBLE PRECISION NOT NULL
 );
 
 CREATE TABLE vendors (

@@ -9,7 +9,7 @@ import java.util.Date;
 
 public interface MaterialPurchaseRepository extends JpaRepository<MaterialPurchaseEntity, UUID> {
 
-    List<MaterialPurchaseEntity> findByPurchaseDateBetween(Date startDate, Date endDate);
+    List<MaterialPurchaseEntity> findByPurchaseDateBetweenOrderByPurchaseDateAsc(Date startDate, Date endDate);
     List<MaterialPurchaseEntity> findByPurchaseDateBetweenAndCreatedBy(Date startDate, Date endDate, String createdBy);
     List<MaterialPurchaseEntity> findByPurchaseDateBetweenAndMaterialId(Date startDate, Date endDate, Integer materialId);
 }

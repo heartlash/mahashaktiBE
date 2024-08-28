@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 @Entity

@@ -1548,7 +1548,11 @@ components:
         - unitId
         - unit
         - quantity
+        - minQuantity
+        - lowStock
+        - wouldLastFor
         - lastPurchaseDate
+        - lastPurchaseRate
       properties:
         materialId:
           type: integer
@@ -1570,11 +1574,27 @@ components:
           type: number
           x-stoplight:
             id: 6wcqkd69j3yrn
+        minQuantity:
+          type: number
+          x-stoplight:
+            id: mruxg4c0qirxt
+        lowStock:
+          type: boolean
+          x-stoplight:
+            id: o2howvf3shwt2
+        wouldLastFor:
+          type: integer
+          x-stoplight:
+            id: 0tp4hdukqfdp7
         lastPurchaseDate:
           type: string
           x-stoplight:
             id: 9gkdn70j9b81c
           format: date
+        lastPurchaseRate:
+          type: number
+          x-stoplight:
+            id: 8ukjmv62igj83
     EggInStock:
       title: EggInStock
       x-stoplight:

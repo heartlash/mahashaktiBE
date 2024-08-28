@@ -36,4 +36,7 @@ public class MaterialStockEntity {
 
     @Column(name = "last_purchase_date", nullable = false)
     private Date lastPurchaseDate;
+
+    @Column(name = "last_purchase_rate", nullable = false)
+    private BigDecimal lastPurchaseRate;
 }

@@ -6,6 +6,7 @@ import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
 import com.mahashakti.mahashaktiBE.repository.ProductionRepository;
 import com.mahashakti.mahashaktiBE.repository.SaleRepository;
+import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
@@ -30,7 +31,8 @@ public class AnalyticsService {
     private final SaleRepository saleRepository;
     private final ProductionRepository productionRepository;
     private final DataService dataService;
-
+    private final FlockService flockService;
+    private final MaterialStockCalculator materialStockCalculator;
 
     private Integer currentEggStockCount = 0;
 
@@ -77,7 +79,14 @@ public class AnalyticsService {
             materialInStock.setUnit(materialStockEntity.getMaterial().getUnit().getName());
             materialInStock.setUnitId(materialStockEntity.getMaterial().getUnit().getId());
             materialInStock.setQuantity(materialStockEntity.getQuantity());
+            materialInStock.setMinQuantity(materialStockEntity.getMinQuantity());
+
+            materialInStock.setLowStock(materialStockEntity.getMinQuantity().compareTo(materialStockEntity.getQuantity()) < 0);
+
+            Integer flockCount = flockService.getFlockCount().getCount();
+            materialInStock.setWouldLastFor(materialStockCalculator.stockLastDay(materialStockEntity.getMaterialId(), flockCount));
             materialInStock.setLastPurchaseDate(materialStockEntity.getLastPurchaseDate());
+            materialInStock.setLastPurchaseRate(materialStockEntity.getLastPurchaseRate());
             return materialInStock;
         }).toList();
     }

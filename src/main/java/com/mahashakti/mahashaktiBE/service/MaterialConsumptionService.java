@@ -32,7 +32,7 @@ public class MaterialConsumptionService {
     private final MaterialStockRepository materialStockRepository;
 
     public List<MaterialConsumptionEntity> getAllMaterialConsumption(Date startDate, Date endDate) {
-        return materialConsumptionRepository.findByConsumptionDateBetween(startDate, endDate);
+        return materialConsumptionRepository.findByConsumptionDateBetweenOrderByConsumptionDateAsc(startDate, endDate);
     }
 
 

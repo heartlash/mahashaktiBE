@@ -29,12 +29,12 @@ public class SaleService {
     private final AnalyticsService analyticsService;
 
     public List<SaleEntity> getAllSale(Date startDate, Date endDate, Integer vendorId, Boolean paid) {
-        if(Objects.isNull(vendorId) && Objects.isNull(paid)) return saleRepository.findBySaleDateBetween(startDate, endDate);
+        if(Objects.isNull(vendorId) && Objects.isNull(paid)) return saleRepository.findBySaleDateBetweenOrderBySaleDateAsc(startDate, endDate);
         if(!Objects.isNull(vendorId) && !Objects.isNull(paid))
-            return saleRepository.findBySaleDateBetweenAndVendorIdAndPaid(startDate, endDate, vendorId, paid);
+            return saleRepository.findBySaleDateBetweenAndVendorIdAndPaidOrderBySaleDateAsc(startDate, endDate, vendorId, paid);
 
-        if(Objects.isNull(vendorId)) return saleRepository.findBySaleDateBetweenAndPaid(startDate, endDate, paid);
-        return saleRepository.findBySaleDateBetweenAndVendorId(startDate, endDate, vendorId);
+        if(Objects.isNull(vendorId)) return saleRepository.findBySaleDateBetweenAndPaidOrderBySaleDateAsc(startDate, endDate, paid);
+        return saleRepository.findBySaleDateBetweenAndVendorIdOrderBySaleDateAsc(startDate, endDate, vendorId);
     }
 
     @Transactional

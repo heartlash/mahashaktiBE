@@ -61,3 +61,32 @@ management:
         enabled: true
         sensitive: false
 
+consumption:
+  adult:
+    '[Maize]': 0.0000546012
+    '[Soya DOC]': 0.00002352051
+    '[DORB]': 0.00001218026
+    '[Mustard DOC]': 0
+    '[DCP]': 0.00084001848
+    '[Marble Grit]': 0.00000882019
+    '[LSP]': 0.00367508085
+    '[Salt]': 0.00028350623
+    '[Soda]': 0.00010500231
+    '[Premix]': 0.0010500231
+    '[Red]': 0.00000882019
+    '[Yellow]': 0.00000420009
+
+minimum-stock-days:
+  materials:
+    '[Maize]': 15
+    '[Soya DOC]': 22
+    '[DORB]': 8
+    '[Mustard DOC]': 15
+    '[DCP]': 7
+    '[Marble Grit]': 20
+    '[LSP]': 7
+    '[Salt]': 5
+    '[Soda]': 5
+    '[Premix]': 20
+    '[Red]': 20
+    '[Yellow]': 20
