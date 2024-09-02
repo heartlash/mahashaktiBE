@@ -592,6 +592,51 @@ paths:
                 x-stoplight:
                   id: a061lfqna0d5c
     parameters: []
+  /sale/credits:
+    get:
+      summary: Sale Credits
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-sale-credits
+      parameters: []
+      x-stoplight:
+        id: rut66ijl0aku7
+    parameters: []
+  /sale/credits/settle:
+    parameters: []
+    post:
+      summary: Settle sale credit
+      tags:
+        - Sale
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-sale-credits-settle
+      x-stoplight:
+        id: tb7gzgyqujds6
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: vendorId
+          required: true
+        - schema:
+            type: number
+          in: query
+          name: amount
+          required: true
   /sale/latest:
     get:
       summary: Sale
@@ -1438,6 +1483,25 @@ components:
           x-stoplight:
             id: 0ljyhovun8syl
           format: date-time
+    SaleCredit:
+      title: SaleCredit
+      x-stoplight:
+        id: c9w1pws35l1d0
+      type: object
+      required:
+        - amount
+        - vendorId
+        - vendorName
+      properties:
+        amount:
+          type: number
+          minimum: 1
+        vendorId:
+          type: integer
+        vendorName:
+          type: string
+          x-stoplight:
+            id: 616ffxq5cp87g
     Production:
       title: Production
       x-stoplight:

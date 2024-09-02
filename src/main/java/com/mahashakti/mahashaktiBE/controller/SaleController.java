@@ -7,6 +7,7 @@ import com.mahashakti.mahashaktiBe.api.SaleApi;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.Sale;
 
+import com.mahashakti.mahashaktiBe.model.SaleCredit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,5 +80,24 @@ public class SaleController implements SaleApi {
                 = Helper.createResponse("MSBE200", "Latest Sale Fetched", "SUCCESS", saleEntity);
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getSaleCredits() {
+        List<SaleCredit> saleCredits = saleService.getSaleCredits();
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Sale Credits Fetched", "SUCCESS", saleCredits);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> postSaleCreditsSettle(Integer vendorId, BigDecimal amount) {
+        saleService.settleVendorCredits(vendorId, amount);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE202", "Sale Credits Settled", "SUCCESS", null);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
     }
 }

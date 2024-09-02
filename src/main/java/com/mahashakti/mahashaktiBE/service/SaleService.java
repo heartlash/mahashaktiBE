@@ -5,12 +5,14 @@ import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.SaleRepository;
 import com.mahashakti.mahashaktiBe.model.Sale;
+import com.mahashakti.mahashaktiBe.model.SaleCredit;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Date;
 import java.util.UUID;
@@ -94,6 +96,56 @@ public class SaleService {
         SaleEntity saleEntity = getSaleById(saleId);
         saleRepository.deleteById(saleId);
         analyticsService.incrementEggStockCount(saleEntity.getSoldCount());
+    }
+
+    public List<SaleCredit> getSaleCredits() {
+
+        List<SaleEntity> allCreditSales = saleRepository.findByPaid(Boolean.FALSE);
+        if(allCreditSales.isEmpty()) return new ArrayList<>();
+
+        HashMap<Integer, SaleCredit> creditAmountsByVendor = new HashMap<>();
+
+        for (SaleEntity sale : allCreditSales) {
+            Integer vendorId = sale.getVendor().getId();
+            String vendorName = sale.getVendor().getName();
+            BigDecimal amount = sale.getAmount();
+
+            creditAmountsByVendor.merge(
+                    vendorId,
+                    new SaleCredit(amount, vendorId, vendorName),
+                    (existing, toMerge) -> new SaleCredit(existing.getAmount().add(toMerge.getAmount()), vendorId, vendorName )
+            );
+        }
+        return new ArrayList<>(creditAmountsByVendor.values());
+    }
+
+    @Transactional
+    public void settleVendorCredits(Integer vendorId, BigDecimal settleAmount) {
+        
+        List<SaleEntity> unpaidSales = saleRepository.findByVendorIdAndPaidOrderByCreatedAtAsc(vendorId, Boolean.FALSE);
+        BigDecimal remainingSettleAmount = settleAmount;
+
+        for (SaleEntity sale : unpaidSales) {
+            BigDecimal saleAmount = sale.getAmount();
+
+            if (remainingSettleAmount.compareTo(BigDecimal.ZERO) <= 0)
+                break;
+
+
+            if (remainingSettleAmount.compareTo(saleAmount) >= 0) {
+                // Fully settle this sale
+                sale.setPaid(true);
+                remainingSettleAmount = remainingSettleAmount.subtract(saleAmount);
+            } else {
+                // Partially settle this sale
+                BigDecimal newSaleAmount = saleAmount.subtract(remainingSettleAmount);
+                sale.setAmount(newSaleAmount);
+                remainingSettleAmount = BigDecimal.ZERO; // All settle amount used up
+            }
+
+            saleRepository.save(sale);
+        }
+
     }
 
 }

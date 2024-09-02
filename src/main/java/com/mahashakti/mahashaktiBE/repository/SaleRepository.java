@@ -12,6 +12,8 @@ import java.util.List;
 public interface SaleRepository extends JpaRepository<SaleEntity, UUID> {
 
     List<SaleEntity> findBySaleDateBetween(Date startDate, Date endDate);
+    List<SaleEntity> findByPaid(Boolean paid);
+    List<SaleEntity> findByVendorIdAndPaidOrderByCreatedAtAsc(Integer vendorId, Boolean paid);
     List<SaleEntity> findBySaleDateBetweenOrderBySaleDateAsc(Date startDate, Date endDate);
     List<SaleEntity> findBySaleDateBetweenAndVendorIdOrderBySaleDateAsc(Date startDate, Date endDate, Integer vendorId);
     List<SaleEntity> findBySaleDateBetweenAndVendorIdAndPaidOrderBySaleDateAsc(Date startDate, Date endDate, Integer vendorId, Boolean paid);
