@@ -1,0 +1,86 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id "org.openapi.generator" version "7.7.0"
+
+}
+
+group = 'com.mahashakti'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(22)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/openapi.yaml"
+	outputDir = "$buildDir/generated"
+	apiPackage = 'com.mahashakti.mahashaktiBe.api'
+	modelPackage = 'com.mahashakti.mahashaktiBe.model'
+	invokerPackage = 'com.mahashakti.mahashaktiBe'
+	configOptions = [
+			useSpringBoot3      : "true",
+			configPackage       : "com.zee.zeus.api.config",
+			dateLibrary         : "java17",
+			serializationLibrary: "jackson",
+			library             : "spring-boot",
+			useBeanValidation   : "true",
+			interfaceOnly       : "true",
+			serializableModel   : "true",
+			useTags             : "true"
+	]
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "$buildDir/generated/src/main/java"
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'com.twilio.sdk:twilio:10.4.0'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.8'
+	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.compileJava.dependsOn tasks.openApiGenerate

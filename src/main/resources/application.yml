@@ -1,0 +1,112 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /mahashakti
+  tomcat:
+    uri-encoding: UTF-8
+  max-http-header-size: 64KB
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    path: /swagger-ui-custom.html
+    operationsSorter=method:
+
+# Implement JLog
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.apache.kafka.clients.Metadata: ERROR
+    org.springframework.security: INFO
+
+datasource:
+  url: jdbc:postgresql://localhost:5432/mahashakti
+  driverClassName: org.postgresql.Driver
+  username: aniket
+  password: admin
+  initializationMode: never
+  platform: postgres
+  dbcp2:
+    validationQuery: SELECT 1
+  hikari:
+    maximumPoolSize: 20
+    minimumPoolSize: 20
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: app.mahashakti@gmail.com
+    password: afpydsusijsdjlvt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+management:
+  server:
+    port: 8080
+  health:
+    ping:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+      metrics:
+        id: metrics
+        enabled: true
+        sensitive: false
+
+twilio:
+  account:
+    sid: AC96db15ef4a94fdc412ac07eb68727c99
+  auth:
+    token: 2e70968687738792f19034000100901b
+  phone:
+    number: +18435472128
+
+
+consumption:
+  adult:
+    '[Maize]': 0.0000546012
+    '[Soya DOC]': 0.00002352051
+    '[DORB]': 0.00001218026
+    '[Mustard DOC]': 0
+    '[DCP]': 0.00084001848
+    '[Marble Grit]': 0.00000882019
+    '[LSP]': 0.00367508085
+    '[Salt]': 0.00028350623
+    '[Soda]': 0.00010500231
+    '[Premix]': 0.0010500231
+    '[Red]': 0.00000882019
+    '[Yellow]': 0.00000420009
+
+minimum-stock-days:
+  materials:
+    '[Maize]': 15
+    '[Soya DOC]': 22
+    '[DORB]': 8
+    '[Mustard DOC]': 15
+    '[DCP]': 7
+    '[Marble Grit]': 20
+    '[LSP]': 7
+    '[Salt]': 5
+    '[Soda]': 5
+    '[Premix]': 20
+    '[Red]': 20
+    '[Yellow]': 20
