@@ -62,6 +62,8 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'com.twilio.sdk:twilio:10.4.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'

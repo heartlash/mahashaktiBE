@@ -897,6 +897,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SignUp'
+  /users/verification:
+    post:
+      summary: Verification
+      tags:
+        - Users
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-users-verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Verification'
+      x-stoplight:
+        id: 3w9u8rchc1zdu
+    parameters: []
   /users/login:
     post:
       summary: Login
@@ -918,6 +940,53 @@ paths:
       x-stoplight:
         id: sm4aq3eqz53x4
     parameters: []
+  /users/detail:
+    parameters: []
+    get:
+      summary: Details
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-users-detail
+      x-stoplight:
+        id: c37hvtcydltan
+      parameters:
+        - schema:
+            type: string
+            format: email
+          in: query
+          name: email
+          required: true
+  /users/resetPassword:
+    parameters: []
+    put:
+      summary: Reset Password
+      tags:
+        - Users
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-users-resetPassword
+      x-stoplight:
+        id: 292o14gkvlx7u
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Login'
   /admin/material:
     post:
       summary: add material
@@ -1502,6 +1571,31 @@ components:
           type: string
           x-stoplight:
             id: 616ffxq5cp87g
+    Verification:
+      title: Verification
+      x-stoplight:
+        id: 2r4v8ubjtfihs
+      type: object
+      required:
+        - email
+        - phoneNumber
+      properties:
+        email:
+          type: string
+          x-stoplight:
+            id: kgvedkeh9650e
+        phoneNumber:
+          type: string
+          x-stoplight:
+            id: rl6zwui3uuq2b
+        emailOtp:
+          type: string
+          x-stoplight:
+            id: h6v3iiurn3z3q
+        phoneNumberOtp:
+          type: string
+          x-stoplight:
+            id: macsqmn0c8o7e
     Production:
       title: Production
       x-stoplight:

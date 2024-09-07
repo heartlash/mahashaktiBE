@@ -57,7 +57,7 @@ public class SaleController implements SaleApi {
         SaleEntity saleEntity = saleService.putSaleById(saleId, sale);
 
         MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Sale UPDATED", "SUCCESS", saleEntity);
+                = Helper.createResponse("MSBE202", "Sale UPDATED", "SUCCESS", saleEntity);
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
     }
