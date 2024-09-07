@@ -44,7 +44,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: app.mahashakti@gmail.com
-    password: afpydsusijsdjlvt
+    password:
     properties:
       mail:
         smtp:
@@ -74,9 +74,9 @@ management:
 
 twilio:
   account:
-    sid: AC96db15ef4a94fdc412ac07eb68727c99
+    sid:
   auth:
-    token: 2e70968687738792f19034000100901b
+    token:
   phone:
     number: +18435472128
 
