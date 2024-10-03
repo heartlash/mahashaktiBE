@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class JwtService {
 
     private static final String SECRET = "FCF4FBF9CAFAA0BD050C4691FF5B21AE9CC8E3BA97B37E71E782F312687676AD3FB8F6AB7E38F5D966990703CBE00541A2DDBD4DAE8C56D697DBF5125472F3C9";
-    private static final long VALIDITY = TimeUnit.HOURS.toMillis(5);
+    private static final long VALIDITY = TimeUnit.DAYS.toMillis(60);
 
     public String generateToken(UserDetails userDetails) {
         Map<String, String> claims = new HashMap<>();

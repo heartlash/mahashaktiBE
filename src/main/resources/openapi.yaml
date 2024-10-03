@@ -1496,7 +1496,7 @@ components:
         - soldCount
         - rate
         - amount
-        - paid
+        - paidAmount
         - vendorId
         - saleDate
       properties:
@@ -1520,8 +1520,8 @@ components:
           x-stoplight:
             id: 63fgo68synhzo
           minimum: 1
-        paid:
-          type: boolean
+        paidAmount:
+          type: number
           x-stoplight:
             id: 3yy2fatpwkg1e
         vendorId:
@@ -1969,7 +1969,7 @@ components:
           type: string
           x-stoplight:
             id: pkzinyur8m5g0
-          default: VIEWER
+          default: ADMIN
         email:
           type: string
           x-stoplight:

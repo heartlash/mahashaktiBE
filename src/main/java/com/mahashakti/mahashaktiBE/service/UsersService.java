@@ -80,7 +80,7 @@ public class UsersService {
             String emailOtp = String.format("%04d", new SecureRandom().nextInt(9999));
             String emailText = String.format("Your Mahashakti verification code is %s", emailOtp);
             message.setText(emailText);
-            //mailSender.send(message);
+            mailSender.send(message);
 
             verification.setEmailOtp(emailOtp);
 
@@ -97,7 +97,7 @@ public class UsersService {
 
          */
 
-            TimeUnit.SECONDS.sleep(2);
+            //TimeUnit.SECONDS.sleep(2);
 
             verification.setPhoneNumberOtp(phoneNumberOtp);
 
