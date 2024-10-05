@@ -54,31 +54,6 @@ public class AdminController implements AdminApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
-
-    @Override
-    public ResponseEntity<MahashaktiResponse> postAdminAddVendor(Vendor vendor) {
-        VendorEntity vendorEntity = adminService.addVendor(vendor);
-        MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE201", "Vendor ADDED", "SUCCESS", vendorEntity);
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
-    }
-
-    @Override
-    public ResponseEntity<MahashaktiResponse> putAdminVendorVendorId(Integer vendorId, Vendor vendor) {
-        VendorEntity vendorEntity = adminService.updateVendor(vendorId, vendor);
-        MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE202", "Vendor UPDATED", "SUCCESS", vendorEntity);
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
-    }
-
-    @Override
-    public ResponseEntity<MahashaktiResponse> deleteAdminVendorVendorId(Integer vendorId) {
-        adminService.deleteVendor(vendorId);
-        MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Vendor DELETED", "SUCCESS", null);
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
-    }
-
     @Override
     public ResponseEntity<MahashaktiResponse> postAdminAddMaterial(Material material) {
         MaterialEntity materialEntity = adminService.addMaterial(material);

@@ -475,6 +475,29 @@ paths:
       x-stoplight:
         id: w2v0tjosljo2p
     parameters: []
+  /generate-document:
+    parameters: []
+    post:
+      summary: Generate Document
+      tags:
+        - Document
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: object
+                properties: {}
+      operationId: post-generate-document
+      x-stoplight:
+        id: ajft5y4gc69xe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/DocumentData'
   '/production/{productionId}':
     parameters:
       - schema:
@@ -1109,67 +1132,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Unit'
-  /admin/vendor:
-    post:
-      summary: add vendor
-      tags:
-        - Admin
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-admin-add-vendor
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vendor'
-      x-stoplight:
-        id: lysjy97tdhvi4
-    parameters: []
-  '/admin/vendor/{vendorId}':
-    parameters:
-      - schema:
-          type: integer
-        name: vendorId
-        in: path
-        required: true
-    delete:
-      summary: vendor
-      tags:
-        - Admin
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: delete-admin-vendor-vendorId
-      x-stoplight:
-        id: blwi0eqpufn3h
-    put:
-      summary: vendor
-      tags:
-        - Admin
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: put-admin-vendor-vendorId
-      x-stoplight:
-        id: u3ssw2xpitmr5
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vendor'
   /admin/operational-expense-item:
     post:
       summary: add operational expense item
@@ -1320,7 +1282,66 @@ paths:
       operationId: get-data-vendors
       x-stoplight:
         id: gpbod9vz929ad
+    post:
+      summary: add vendor
+      tags:
+        - Data
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-add-vendor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
+      x-stoplight:
+        id: lysjy97tdhvi4
     parameters: []
+  '/data/vendor/{vendorId}':
+    parameters:
+      - schema:
+          type: integer
+        name: vendorId
+        in: path
+        required: true
+    delete:
+      summary: vendor
+      tags:
+        - Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-vendor-vendorId
+      x-stoplight:
+        id: blwi0eqpufn3h
+    put:
+      summary: vendor
+      tags:
+        - Data
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-vendor-vendorId
+      x-stoplight:
+        id: u3ssw2xpitmr5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vendor'
   '/data/vendors/{vendorId}':
     get:
       summary: vendors
@@ -1524,6 +1545,10 @@ components:
           type: number
           x-stoplight:
             id: 3yy2fatpwkg1e
+        paid:
+          type: boolean
+          x-stoplight:
+            id: c746nqbm0a09n
         vendorId:
           type: integer
           x-stoplight:
@@ -1552,6 +1577,45 @@ components:
           x-stoplight:
             id: 0ljyhovun8syl
           format: date-time
+    DocumentData:
+      title: DocumentData
+      x-stoplight:
+        id: 7mo1172rz1uvd
+      type: object
+      required:
+        - name
+        - details
+        - headers
+        - data
+      properties:
+        name:
+          type: string
+          x-stoplight:
+            id: vdb7w0h5qrhyv
+        details:
+          type: string
+          x-stoplight:
+            id: teevxd5uey8v9
+        headers:
+          type: array
+          x-stoplight:
+            id: 91ggj948nfkko
+          items:
+            x-stoplight:
+              id: ggd8pbipc5lzm
+            type: string
+        data:
+          type: array
+          x-stoplight:
+            id: vce7kc7dno5k2
+          items:
+            x-stoplight:
+              id: 8457gzu05n5jt
+            type: array
+            items:
+              x-stoplight:
+                id: t65mch5i7530r
+              type: string
     SaleCredit:
       title: SaleCredit
       x-stoplight:

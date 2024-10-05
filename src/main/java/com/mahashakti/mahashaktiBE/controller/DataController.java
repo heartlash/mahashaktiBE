@@ -8,6 +8,7 @@ import com.mahashakti.mahashaktiBE.service.DataService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.DataApi;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
+import com.mahashakti.mahashaktiBe.model.Vendor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,4 +107,29 @@ public class DataController implements DataApi {
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> postAddVendor(Vendor vendor) {
+        VendorEntity vendorEntity = dataService.addVendor(vendor);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE201", "Vendor ADDED", "SUCCESS", vendorEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> putVendorVendorId(Integer vendorId, Vendor vendor) {
+        VendorEntity vendorEntity = dataService.updateVendor(vendorId, vendor);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE202", "Vendor UPDATED", "SUCCESS", vendorEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> deleteVendorVendorId(Integer vendorId) {
+        dataService.deleteVendor(vendorId);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Vendor DELETED", "SUCCESS", null);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
 }

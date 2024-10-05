@@ -48,6 +48,7 @@ public class SaleService {
             SaleEntity saleEntity = new SaleEntity();
             BeanUtils.copyProperties(sale, saleEntity);
             saleEntity.setVendor(dataService.getVendorById(sale.getVendorId()));
+            saleEntity.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) >= 0 ? Boolean.TRUE : Boolean.FALSE);
             totalSoldCount.updateAndGet(v -> v + saleEntity.getSoldCount());
             return saleEntity;
         }).toList();
@@ -133,15 +134,17 @@ public class SaleService {
             if (remainingSettleAmount.compareTo(BigDecimal.ZERO) <= 0)
                 break;
 
-
+            // Check if the remaining settle amount is greater than or equal to the sale amount
             if (remainingSettleAmount.compareTo(saleAmount) >= 0) {
                 // Fully settle this sale
-                sale.setPaid(true);
-                remainingSettleAmount = remainingSettleAmount.subtract(saleAmount);
+                sale.setPaidAmount(saleAmount); // Set the paid amount to the sale amount
+                sale.setPaid(Boolean.TRUE); // Set the paid amount to the sale amount
+                remainingSettleAmount = remainingSettleAmount.subtract(saleAmount); // Decrease the remaining settle amount
             } else {
                 // Partially settle this sale
                 BigDecimal newSaleAmount = saleAmount.subtract(remainingSettleAmount);
-                sale.setAmount(newSaleAmount);
+                sale.setAmount(newSaleAmount); // Update the sale amount to reflect the partial payment
+                sale.setPaidAmount(remainingSettleAmount); // Set the paid amount
                 remainingSettleAmount = BigDecimal.ZERO; // All settle amount used up
             }
 

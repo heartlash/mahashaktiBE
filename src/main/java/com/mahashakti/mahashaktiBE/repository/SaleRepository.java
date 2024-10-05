@@ -1,6 +1,5 @@
 package com.mahashakti.mahashaktiBE.repository;
 
-import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

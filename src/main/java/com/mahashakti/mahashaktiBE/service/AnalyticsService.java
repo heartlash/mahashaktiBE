@@ -55,7 +55,7 @@ public class AnalyticsService {
 
         for (SaleEntity saleEntity : sales) {
             if (!saleEntity.getPaid())
-                creditAmount = creditAmount.add(saleEntity.getAmount());
+                creditAmount = creditAmount.add(saleEntity.getAmount().subtract(saleEntity.getPaidAmount()));
             saleAmount = saleAmount.add(saleEntity.getAmount());
         }
 

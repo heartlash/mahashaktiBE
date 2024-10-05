@@ -5,13 +5,16 @@ import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
+import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.OperationalExpenseItemRepository;
 import com.mahashakti.mahashaktiBE.repository.UnitRepository;
 import com.mahashakti.mahashaktiBE.repository.VendorRepository;
 import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
+import com.mahashakti.mahashaktiBe.model.Vendor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,6 +72,35 @@ public class DataService {
         if(vendorEntityOptional.isEmpty())
             throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
         return vendorEntityOptional.get();
+    }
+
+    public VendorEntity addVendor(Vendor vendor) {
+        VendorEntity vendorEntity = new VendorEntity();
+        BeanUtils.copyProperties(vendor, vendorEntity);
+        return vendorRepository.save(vendorEntity);
+    }
+
+
+    public VendorEntity updateVendor(Integer vendorId, Vendor vendor) {
+
+        if(!vendorId.equals(vendor.getId())) throw new MismatchException("Vendor ID Mismatch in Put Request");
+
+        Optional<VendorEntity> unitsOptional = vendorRepository.findById(vendorId);
+        if(unitsOptional.isEmpty())
+            throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
+
+        VendorEntity vendorEntity = new VendorEntity();
+        BeanUtils.copyProperties(vendor, vendorEntity);
+        return vendorRepository.save(vendorEntity);
+    }
+
+    public void deleteVendor(Integer vendorId) {
+
+        Optional<VendorEntity> vendorOptional = vendorRepository.findById(vendorId);
+        if(vendorOptional.isEmpty())
+            throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
+        vendorRepository.deleteById(vendorId);
+
     }
 
     public List<MaterialStockEntity> getMaterialStock() {

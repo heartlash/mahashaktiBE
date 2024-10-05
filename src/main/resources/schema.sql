@@ -73,6 +73,7 @@ CREATE TABLE sale (
     sold_count INTEGER NOT NULL,
     rate DOUBLE PRECISION NOT NULL,
     amount DOUBLE PRECISION NOT NULL,
+    paid_amount DOUBLE PRECISION NOT NULL,
     paid BOOLEAN NOT NULL,
     vendor_id INTEGER REFERENCES vendors(id),
     sale_date TIMESTAMP NOT NULL,

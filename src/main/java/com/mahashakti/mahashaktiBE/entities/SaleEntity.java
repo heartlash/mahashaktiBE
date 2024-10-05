@@ -36,6 +36,9 @@ public class SaleEntity {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "paidAmount", nullable = false)
+    private BigDecimal paidAmount;
+
     @Column(name = "paid", nullable = false)
     private Boolean paid;
 

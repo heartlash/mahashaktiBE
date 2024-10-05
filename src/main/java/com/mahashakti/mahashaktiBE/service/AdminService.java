@@ -61,35 +61,6 @@ public class AdminService {
 
     }
 
-    public VendorEntity addVendor(Vendor vendor) {
-        VendorEntity vendorEntity = new VendorEntity();
-        BeanUtils.copyProperties(vendor, vendorEntity);
-        return vendorRepository.save(vendorEntity);
-    }
-
-
-    public VendorEntity updateVendor(Integer vendorId, Vendor vendor) {
-
-        if(!vendorId.equals(vendor.getId())) throw new MismatchException("Vendor ID Mismatch in Put Request");
-
-        Optional<VendorEntity> unitsOptional = vendorRepository.findById(vendorId);
-        if(unitsOptional.isEmpty())
-            throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
-
-        VendorEntity vendorEntity = new VendorEntity();
-        BeanUtils.copyProperties(vendor, vendorEntity);
-        return vendorRepository.save(vendorEntity);
-    }
-
-    public void deleteVendor(Integer vendorId) {
-
-        Optional<VendorEntity> vendorOptional = vendorRepository.findById(vendorId);
-        if(vendorOptional.isEmpty())
-            throw new ResourceNotFoundException(String.format("Vendor Resource Not Found: %d", vendorId));
-        vendorRepository.deleteById(vendorId);
-
-    }
-
     public MaterialEntity addMaterial(Material material) {
         MaterialEntity materialEntity = new MaterialEntity();
         BeanUtils.copyProperties(material, materialEntity, "unit");
