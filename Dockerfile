@@ -2,7 +2,7 @@ FROM eclipse-temurin:22-jdk-alpine
 
 WORKDIR /app
 
-COPY target/mahashaktiBE.jar /app/mahashaktiBE.jar
+COPY build/libs/*.jar /app/mahashaktiBE.jar
 
 EXPOSE 8080
 
