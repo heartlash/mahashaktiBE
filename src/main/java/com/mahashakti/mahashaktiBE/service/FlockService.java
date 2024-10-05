@@ -87,7 +87,11 @@ public class FlockService {
     @PostConstruct
     public FlockCount getFlockCount() {
         if(flockCount <= 0)
-            flockCount = flockRepository.findAll().stream().mapToInt(FlockEntity::getCount).sum();
+            try {
+                flockCount = flockRepository.findAll().stream().mapToInt(FlockEntity::getCount).sum();
+            } catch (Exception e) {
+                log.error("Failed to calculate flock count: {}", e.toString());
+            }
 
         return new FlockCount(flockCount);
     }

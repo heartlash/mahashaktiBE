@@ -94,17 +94,21 @@ public class AnalyticsService {
     @PostConstruct
     public EggCount getAnalyticsEggStock() {
         if(currentEggStockCount <= 0) {
-            Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(
-                    new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
-                    .stream()
-                    .map(ProductionEntity::getSaleableCount)
-                    .reduce(0, Integer::sum);
+            try {
+                Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(
+                                new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
+                        .stream()
+                        .map(ProductionEntity::getSaleableCount)
+                        .reduce(0, Integer::sum);
 
-            Integer soldCount = saleRepository.findBySaleDateBetween(
-                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
-                    .stream().mapToInt(SaleEntity::getSoldCount).sum();
+                Integer soldCount = saleRepository.findBySaleDateBetween(
+                                new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
+                        .stream().mapToInt(SaleEntity::getSoldCount).sum();
 
-            currentEggStockCount = saleableProductionCount - soldCount;
+                currentEggStockCount = saleableProductionCount - soldCount;
+            } catch (Exception e) {
+                log.error("Failed to get egg stock: {}", e.toString());
+            }
         }
         return new EggCount(currentEggStockCount);
     }
