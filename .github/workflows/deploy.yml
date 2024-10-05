@@ -38,3 +38,22 @@ jobs:
 
       - name: Publish Image to Docker Hub
         run: docker push heartlash/mahashaktibe:latest
+
+  deploy:
+    needs: build
+    runs-on: [ubuntu-latest]
+    steps:
+      # Step to create the .pem file on the runner from the secret
+      - name: Create Server Secret File
+        run: |
+          echo "${{ secrets.MAHASHAKTI_SERVER_KEY }}" > mahashakti-server-key.pem
+          chmod 600 mahashakti-server-key.pem
+
+      - name: Deploy to Mahashakti-Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i mahashakti-server-key.pem ubuntu@13.201.73.202 "
+            docker pull heartlash/mahashaktibe:latest &&
+            docker stop mahashakti-app || true &&
+            docker rm mahashakti-app || true &&
+            docker run -d --name mahashakti-app -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 heartlash/mahashaktibe:latest
+          "

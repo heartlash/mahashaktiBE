@@ -13,7 +13,7 @@ CREATE TABLE units (
 CREATE TABLE materials (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
-    unit_id INTEGER REFERENCES units(id),
+    unit_id INTEGER REFERENCES units(id)
 );
 
 CREATE TABLE material_stock (

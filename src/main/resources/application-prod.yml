@@ -24,8 +24,8 @@ logging:
 datasource:
   url: jdbc:postgresql://localhost:5432/mahashakti
   driverClassName: org.postgresql.Driver
-  username: aniket
-  password: admin
+  username: mahashaktiAdmin
+  password: mahashaktiPassword
   initializationMode: never
   platform: postgres
   dbcp2:
@@ -35,8 +35,6 @@ datasource:
     minimumPoolSize: 20
 
 spring:
-  profiles:
-    active: default
   jpa:
     hibernate:
       ddl-auto: none
