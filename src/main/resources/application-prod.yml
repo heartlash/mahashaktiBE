@@ -36,9 +36,11 @@ datasource:
 
 spring:
   jpa:
+    properties:
+      hibernate:
+        boot:
+          allow_jdbc_metadata_access: false
     hibernate:
-      boot:
-        allow_jdbc_metadata_access: false
       ddl-auto: none
       show-sql: true
 
