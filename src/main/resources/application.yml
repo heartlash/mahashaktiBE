@@ -35,10 +35,10 @@ datasource:
     minimumPoolSize: 20
 
 spring:
-  profiles:
-    active: default
   jpa:
     hibernate:
+      boot:
+        allow_jdbc_metadata_access: false
       ddl-auto: none
       show-sql: true
 
