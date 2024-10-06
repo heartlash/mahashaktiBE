@@ -24,8 +24,8 @@ logging:
 datasource:
   url: jdbc:postgresql://host.docker.internal:5432/mahashakti
   driverClassName: org.postgresql.Driver
-  username: mahashaktiAdmin
-  password: mahashaktiPassword
+  username: msuser
+  password: mspassword
   initializationMode: never
   platform: postgres
   dbcp2:
