@@ -67,7 +67,8 @@ public  class MaterialStockCalculator {
             if(perBirdPerDay.compareTo(new BigDecimal(0)) == 0) return 0;
 
             BigDecimal totalDailyConsumption = perBirdPerDay.multiply(new BigDecimal(currentFlockCount));
-            BigDecimal daysStockWillLast = currentQuantity.divide(totalDailyConsumption, RoundingMode.DOWN);
+            BigDecimal daysStockWillLast = totalDailyConsumption.compareTo(new BigDecimal(0)) == 0
+                    ? new BigDecimal(0) : currentQuantity.divide(totalDailyConsumption, RoundingMode.DOWN);
 
             return daysStockWillLast.setScale(0, RoundingMode.DOWN).intValue();
         }
