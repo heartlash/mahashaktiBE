@@ -92,8 +92,8 @@ public class MaterialConsumptionService {
             MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialConsumption.getMaterialId());
 
             BigDecimal stockQuantity = materialStockEntity.getQuantity()
-                    .subtract(materialConsumptionEntityInDb.getQuantity())
-                    .add(materialConsumption.getQuantity());
+                    .add(materialConsumptionEntityInDb.getQuantity())
+                    .subtract(materialConsumption.getQuantity());
 
             if(stockQuantity.compareTo(BigDecimal.ZERO) < 0) throw new InvalidDataStateException(
                     "Final Stock Value Cannot Be Negative:"
@@ -115,7 +115,7 @@ public class MaterialConsumptionService {
         MaterialConsumptionEntity materialConsumptionEntity = getMaterialConsumptionById(consumptionId);
         MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialConsumptionEntity.getMaterial().getId());
 
-        materialStockEntity.setQuantity(materialStockEntity.getQuantity().subtract(materialConsumptionEntity.getQuantity()));
+        materialStockEntity.setQuantity(materialStockEntity.getQuantity().add(materialConsumptionEntity.getQuantity()));
         materialStockRepository.save(materialStockEntity);
         materialConsumptionRepository.deleteById(consumptionId);
     }
