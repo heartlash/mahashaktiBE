@@ -1,7 +1,6 @@
 CREATE TABLE operational_expense_items (
     id SERIAL PRIMARY KEY ,
-    item VARCHAR(100) NOT NULL,
-    remarks VARCHAR(200)
+    item VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE units (
@@ -111,6 +110,7 @@ CREATE TABLE operational_expense (
     id UUID PRIMARY KEY,
     item_id INTEGER REFERENCES operational_expense_items(id),
     amount DOUBLE PRECISION NOT NULL,
+    remarks VARCHAR(200),
     expense_date TIMESTAMP NOT NULL,
     created_by VARCHAR(50),
     updated_by VARCHAR(50),

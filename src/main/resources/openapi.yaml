@@ -1484,6 +1484,10 @@ components:
           x-stoplight:
             id: ibqi1tr4mo2nt
           minimum: 1
+        remarks:
+          type: string
+          x-stoplight:
+            id: 6p251h0fg7fly
         expenseDate:
           type: string
           x-stoplight:
@@ -2124,7 +2128,6 @@ components:
       type: object
       required:
         - item
-        - remarks
       properties:
         id:
           type: integer
@@ -2134,10 +2137,6 @@ components:
           type: string
           x-stoplight:
             id: 8lxngngtyfgf5
-        remarks:
-          type: string
-          x-stoplight:
-            id: w5gws7nma8fkp
     Login:
       title: Login
       x-stoplight:

@@ -35,6 +35,9 @@ public class OperationalExpenseEntity {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "remarks", length = 200)
+    private String remarks;
+
     @Column(name = "expense_date", nullable = false)
     private Date expenseDate;
 

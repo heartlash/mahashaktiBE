@@ -22,7 +22,4 @@ public class OperationalExpenseItemEntity implements Serializable {
     @Column(name = "item", nullable = false, length = 100)
     private String item;
 
-    @Column(name = "remarks", length = 200)
-    private String remarks;
-
 }
