@@ -48,7 +48,7 @@ public class SaleService {
             SaleEntity saleEntity = new SaleEntity();
             BeanUtils.copyProperties(sale, saleEntity);
             saleEntity.setVendor(dataService.getVendorById(sale.getVendorId()));
-            saleEntity.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) >= 0 ? Boolean.TRUE : Boolean.FALSE);
+            saleEntity.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
             totalSoldCount.updateAndGet(v -> v + saleEntity.getSoldCount());
             return saleEntity;
         }).toList();
