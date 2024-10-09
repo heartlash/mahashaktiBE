@@ -81,10 +81,9 @@ public class SaleService {
         SaleEntity saleEntityInDb = getSaleById(saleId);
         Integer soldCountBefore = saleEntityInDb.getSoldCount();
 
-        if(sale.getPaidAmount().compareTo(saleEntityInDb.getPaidAmount()) != 0)
-            saleEntityInDb.setPaid(saleEntityInDb.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
-
         BeanUtils.copyProperties(sale, saleEntityInDb, "createdBy", "createdAt");
+
+        saleEntityInDb.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
 
         if(!sale.getVendorId().equals(saleEntityInDb.getVendor().getId()))
             saleEntityInDb.setVendor(dataService.getVendorById(sale.getVendorId()));
