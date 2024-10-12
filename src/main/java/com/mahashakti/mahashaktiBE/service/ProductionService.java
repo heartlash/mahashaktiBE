@@ -26,6 +26,7 @@ public class ProductionService {
     private final ProductionRepository productionRepository;
     private final FlockService flockService;
     private final AnalyticsService analyticsService;
+    private final MaterialConsumptionService materialConsumptionService;
 
     public List<ProductionEntity> getAllProduction(Date startDate, Date endDate) {
         return productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(startDate, endDate);
@@ -48,6 +49,7 @@ public class ProductionService {
 
         ProductionEntity productionEntitySaved = productionRepository.save(productionEntity);
         analyticsService.incrementEggStockCount(saleableCount);
+        materialConsumptionService.postDailyMaterialConsumption(flockService.getFlockCount().getCount(), production.getProductionDate());
         return productionEntitySaved;
     }
 
@@ -93,6 +95,7 @@ public class ProductionService {
         ProductionEntity productionEntity = getProductionById(productionId);
         analyticsService.decrementEggStockCount(productionEntity.getSaleableCount());
         productionRepository.deleteById(productionId);
+        materialConsumptionService.deleteMaterialConsumptionByConsumptionDate(productionEntity.getProductionDate());
     }
 
     private BigDecimal calculateProductionPercentage(Integer producedCount) {

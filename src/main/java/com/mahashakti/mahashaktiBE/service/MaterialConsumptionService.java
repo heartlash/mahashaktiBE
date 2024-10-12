@@ -8,6 +8,7 @@ import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialConsumptionRepository;
 import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
+import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.MaterialConsumption;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class MaterialConsumptionService {
     private final MaterialConsumptionRepository materialConsumptionRepository;
     private final DataService dataService;
     private final MaterialStockRepository materialStockRepository;
+    private final MaterialStockCalculator materialStockCalculator;
 
     public List<MaterialConsumptionEntity> getAllMaterialConsumption(Date startDate, Date endDate) {
         return materialConsumptionRepository.findByConsumptionDateBetweenOrderByConsumptionDateAsc(startDate, endDate);
@@ -119,4 +121,33 @@ public class MaterialConsumptionService {
         materialStockRepository.save(materialStockEntity);
         materialConsumptionRepository.deleteById(consumptionId);
     }
+
+    public List<MaterialConsumptionEntity> postDailyMaterialConsumption(Integer flockCount, Date productionDate) {
+
+        List<MaterialConsumption> materialConsumptionList = dataService.getMaterials().stream().map(materialEntity -> {
+            MaterialConsumption materialConsumption = new MaterialConsumption();
+
+            materialConsumption.setConsumptionDate(productionDate);
+            materialConsumption.setMaterialId(materialEntity.getId());
+            materialConsumption.setQuantity(materialStockCalculator
+                    .getDailyExpectedMaterialConsumption(materialEntity.getName(), flockCount));
+            materialConsumption.setCreatedAt(new Date());
+            materialConsumption.setCreatedBy("Mahashakti System");
+
+            return materialConsumption;
+        }).toList();
+
+        return postMaterialConsumptions(materialConsumptionList);
+    }
+
+    public void deleteMaterialConsumptionByConsumptionDate(Date consumptionDate) {
+
+        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionRepository.getByConsumptionDate(consumptionDate);
+
+        materialConsumptionEntityList.forEach(materialConsumptionEntity -> {
+            deleteMaterialConsumptionById(materialConsumptionEntity.getId());
+        });
+
+    }
+
 }

@@ -77,4 +77,8 @@ public  class MaterialStockCalculator {
 
     }
 
+    public BigDecimal getDailyExpectedMaterialConsumption(String materialName, Integer currentFlockCount) {
+        BigDecimal materialConsumptionPerBird = consumptionProperties.getAdult().get(materialName);
+        return materialConsumptionPerBird.multiply(new BigDecimal(currentFlockCount));
+    }
 }

@@ -84,6 +84,9 @@ public class AnalyticsService {
             materialInStock.setLowStock(materialStockEntity.getMinQuantity().compareTo(materialStockEntity.getQuantity()) < 0);
 
             Integer flockCount = flockService.getFlockCount().getCount();
+            materialInStock.setExpectedDailyConsumption(
+                    materialStockCalculator.getDailyExpectedMaterialConsumption(materialStockEntity.getMaterial().getName(), flockCount));
+
             materialInStock.setWouldLastFor(materialStockCalculator.stockLastDay(materialStockEntity.getMaterialId(), flockCount));
             materialInStock.setLastPurchaseDate(materialStockEntity.getLastPurchaseDate());
             materialInStock.setLastPurchaseRate(materialStockEntity.getLastPurchaseRate());

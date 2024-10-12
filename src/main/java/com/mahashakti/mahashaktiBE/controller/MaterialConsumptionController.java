@@ -2,10 +2,10 @@ package com.mahashakti.mahashaktiBE.controller;
 
 
 import com.mahashakti.mahashaktiBE.entities.MaterialConsumptionEntity;
-import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
 import com.mahashakti.mahashaktiBE.service.MaterialConsumptionService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.MaterialConsumptionApi;
+import com.mahashakti.mahashaktiBe.model.DailyConsumption;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.MaterialConsumption;
 import lombok.RequiredArgsConstructor;
@@ -80,5 +80,28 @@ public class MaterialConsumptionController implements MaterialConsumptionApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Material Consumption DELETED", "SUCCESS", null);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> postDailyMaterialConsumption(DailyConsumption dailyConsumption) {
+        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionService.postDailyMaterialConsumption(
+                dailyConsumption.getFlockCount(), dailyConsumption.getProductionDate());
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE201", "Daily Material Consumption CREATED", "SUCCESS", materialConsumptionEntityList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> deleteMaterialConsumptionDaily(DailyConsumption dailyConsumption) {
+        materialConsumptionService.deleteMaterialConsumptionByConsumptionDate(dailyConsumption.getProductionDate());
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Daily Material Consumption DELETED", "SUCCESS", null);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+
+    }
 }

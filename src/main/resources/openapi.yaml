@@ -296,6 +296,50 @@ paths:
         id: 950qan3xizuqt
       tags:
         - MaterialConsumption
+  /material/consumption/daily:
+    parameters: []
+    post:
+      summary: Post daily consumption
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-daily-material-consumption
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/DailyConsumption'
+      tags:
+        - MaterialConsumption
+      x-stoplight:
+        id: blf2ktvyug15l
+    delete:
+      summary: ''
+      tags:
+        - MaterialConsumption
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-material-consumption-daily
+      x-stoplight:
+        id: u81i862m81qbw
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/DailyConsumption'
   /operational-expense:
     get:
       summary: Operational expense
@@ -1774,6 +1818,7 @@ components:
         - unitId
         - unit
         - quantity
+        - expectedDailyConsumption
         - minQuantity
         - lowStock
         - wouldLastFor
@@ -1800,6 +1845,10 @@ components:
           type: number
           x-stoplight:
             id: 6wcqkd69j3yrn
+        expectedDailyConsumption:
+          type: number
+          x-stoplight:
+            id: aqvvd5m7jkl66
         minQuantity:
           type: number
           x-stoplight:
@@ -2166,5 +2215,22 @@ components:
           type: string
           x-stoplight:
             id: x6d0tako06n28
+    DailyConsumption:
+      title: DailyConsumption
+      x-stoplight:
+        id: vjf4tzwbyl404
+      type: object
+      required:
+        - productionDate
+      properties:
+        flockCount:
+          type: integer
+          x-stoplight:
+            id: w2jdcicuhrq25
+        productionDate:
+          type: string
+          x-stoplight:
+            id: y1thhs2wfyhmt
+          format: date
   requestBodies: {}
   responses: {}
