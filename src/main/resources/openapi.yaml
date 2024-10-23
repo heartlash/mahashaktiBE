@@ -850,6 +850,19 @@ paths:
       operationId: get-flock
       x-stoplight:
         id: 1cyya6hxqio38
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
     post:
       summary: Flock data
       tags:

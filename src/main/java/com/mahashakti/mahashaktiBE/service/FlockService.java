@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,8 +51,8 @@ public class FlockService {
         return flockEntityOptional.get();
     }
 
-    public List<FlockEntity> getFlocks() {
-        return flockRepository.findAll();
+    public List<FlockEntity> getFlocks(Date startDate, Date endDate) {
+        return flockRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
     }
 
     public void deleteFlock(UUID flockDataID) {

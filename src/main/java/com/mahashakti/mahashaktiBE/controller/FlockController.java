@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +35,8 @@ public class FlockController implements FlockApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
 
     @Override
-    public ResponseEntity<MahashaktiResponse> getFlock() {
-        List<FlockEntity> flockEntityList = flockService.getFlocks();
+    public ResponseEntity<MahashaktiResponse> getFlock(Date startDate, Date endDate) {
+        List<FlockEntity> flockEntityList = flockService.getFlocks(startDate, endDate);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Flock FETCHED", "SUCCESS", flockEntityList);
 
