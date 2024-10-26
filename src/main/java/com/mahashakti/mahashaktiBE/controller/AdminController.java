@@ -30,7 +30,6 @@ public class AdminController implements AdminApi {
 
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<MahashaktiResponse> postAdminAddUnit(Unit unit) {
         UnitEntity unitEntity = adminService.addUnit(unit);
         MahashaktiResponse mahashaktiResponse

@@ -39,6 +39,11 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/users/**", "/error").permitAll();
                     registry.requestMatchers("/admin/**").hasRole("ADMIN");
+                    registry.requestMatchers("/sale/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers("/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers("/analytics/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers("/data/vendors").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers("/flock").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
                     registry.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

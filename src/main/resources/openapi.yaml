@@ -69,6 +69,134 @@ paths:
                   id: q8wne3wzwhd05
       parameters: []
     parameters: []
+  /material/restock:
+    get:
+      summary: Material Restock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-all-material-restock
+      tags:
+        - MaterialRestock
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
+      x-stoplight:
+        id: tmfk0tjt5u26y
+    post:
+      summary: Material Restock
+      tags:
+        - MaterialRestock
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-material-restock
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/MaterialRestock'
+      parameters: []
+      x-stoplight:
+        id: 4sw3jwxvho2xv
+    parameters: []
+  '/material/restock/id/{materialRestockId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: materialRestockId
+        in: path
+        required: true
+    put:
+      summary: Material expense
+      tags:
+        - MaterialRestock
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-material-restock-materialRestockId
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaterialRestock'
+      x-stoplight:
+        id: u51bncrr5mqog
+    delete:
+      summary: Material Restock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-material-restock-materialRestockId
+      tags:
+        - MaterialRestock
+      x-stoplight:
+        id: mfxsnwkxu8s1b
+  '/material/restock/{materialId}':
+    parameters:
+      - schema:
+          type: integer
+          format: uuid
+        name: materialId
+        in: path
+        required: true
+    get:
+      summary: Material Restock MaterialRestockId
+      tags:
+        - MaterialRestock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-material-restock-materialRestockId
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
+      x-stoplight:
+        id: xo13w39s334qx
   '/material/purchase/{materialPurchaseId}':
     parameters:
       - schema:
@@ -1517,6 +1645,39 @@ components:
           x-stoplight:
             id: hpesd906mjq0l
           format: date-time
+    MaterialRestock:
+      title: MaterialRestock
+      x-stoplight:
+        id: x3pg432gu9rah
+      type: object
+      required:
+        - materialId
+        - restockDate
+        - quantity
+        - createdBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        materialId:
+          type: integer
+        restockDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: 06itmx36ddyls
+        quantity:
+          type: number
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     OperationalExpense:
       title: OperationalExpense
       x-stoplight:
@@ -1835,8 +1996,8 @@ components:
         - minQuantity
         - lowStock
         - wouldLastFor
-        - lastPurchaseDate
-        - lastPurchaseRate
+        - lastRestockDate
+        - lastRestockQuantity
       properties:
         materialId:
           type: integer
@@ -1874,12 +2035,12 @@ components:
           type: integer
           x-stoplight:
             id: 0tp4hdukqfdp7
-        lastPurchaseDate:
+        lastRestockDate:
           type: string
           x-stoplight:
             id: 9gkdn70j9b81c
           format: date
-        lastPurchaseRate:
+        lastRestockQuantity:
           type: number
           x-stoplight:
             id: 8ukjmv62igj83
@@ -2099,7 +2260,7 @@ components:
           type: string
           x-stoplight:
             id: pkzinyur8m5g0
-          default: ADMIN
+          default: VIEWER
         email:
           type: string
           x-stoplight:

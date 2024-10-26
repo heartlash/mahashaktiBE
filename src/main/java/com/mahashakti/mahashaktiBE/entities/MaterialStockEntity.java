@@ -34,9 +34,9 @@ public class MaterialStockEntity {
     @Column(name = "min_quantity", nullable = false)
     private BigDecimal minQuantity;
 
-    @Column(name = "last_purchase_date", nullable = false)
-    private Date lastPurchaseDate;
+    @Column(name = "last_restock_date", nullable = false)
+    private Date lastRestockDate;
 
-    @Column(name = "last_purchase_rate", nullable = false)
-    private BigDecimal lastPurchaseRate;
+    @Column(name = "last_restock_quantity", nullable = false)
+    private BigDecimal lastRestockQuantity;
 }

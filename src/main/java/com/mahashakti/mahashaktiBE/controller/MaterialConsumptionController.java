@@ -22,6 +22,7 @@ import java.util.UUID;
 public class MaterialConsumptionController implements MaterialConsumptionApi {
 
     private final MaterialConsumptionService materialConsumptionService;
+
     @Override
     public ResponseEntity<MahashaktiResponse> getAllMaterialConsumption(Date startDate, Date endDate) {
         List<MaterialConsumptionEntity> materialConsumptionEntityList

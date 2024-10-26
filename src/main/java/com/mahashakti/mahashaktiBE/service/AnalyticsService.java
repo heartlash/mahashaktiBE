@@ -88,8 +88,8 @@ public class AnalyticsService {
                     materialStockCalculator.getDailyExpectedMaterialConsumption(materialStockEntity.getMaterial().getName(), flockCount));
 
             materialInStock.setWouldLastFor(materialStockCalculator.stockLastDay(materialStockEntity.getMaterialId(), flockCount));
-            materialInStock.setLastPurchaseDate(materialStockEntity.getLastPurchaseDate());
-            materialInStock.setLastPurchaseRate(materialStockEntity.getLastPurchaseRate());
+            materialInStock.setLastRestockDate(materialStockEntity.getLastRestockDate());
+            materialInStock.setLastRestockQuantity(materialStockEntity.getLastRestockQuantity());
             return materialInStock;
         }).toList();
     }
