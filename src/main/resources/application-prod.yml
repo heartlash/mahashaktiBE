@@ -89,8 +89,8 @@ twilio:
 consumption:
   adult:
     '[Maize]': 0.000055
-    '[Soya DOC]': 0.00002893
-    '[DORB]': 0.000011
+    '[Soya DOC]': 0.0000275
+    '[DORB]': 0.0000128
     '[Mustard DOC]': 0
     '[DCP]': 0.0008820194
     '[Marble Grit]': 0.0000092402
