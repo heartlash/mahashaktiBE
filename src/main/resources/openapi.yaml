@@ -1838,6 +1838,22 @@ components:
               x-stoplight:
                 id: t65mch5i7530r
               type: string
+        summaryHeaders:
+          type: array
+          x-stoplight:
+            id: nx1zn68164t3w
+          items:
+            x-stoplight:
+              id: wniocx5nzz5i3
+            type: string
+        summaryData:
+          type: array
+          x-stoplight:
+            id: 8ffkjlmbrlwdj
+          items:
+            x-stoplight:
+              id: dpvlal9960u9i
+            type: string
     SaleCredit:
       title: SaleCredit
       x-stoplight:

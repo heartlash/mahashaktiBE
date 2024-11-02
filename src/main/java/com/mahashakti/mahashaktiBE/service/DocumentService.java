@@ -20,13 +20,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Slf4j
 public class DocumentService {
 
-    public byte[] generateDocument(String name, String details, List<String> headers, List<List<String>> data) {
+    public byte[] generateDocument(String name, String details, List<String> headers, List<List<String>> data,
+                                   List<String> summaryHeaders, List<String> summaryData) {
 
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -40,12 +42,11 @@ public class DocumentService {
             // Initialize document
             Document document = new Document(pdfDoc);
 
-
             String logoPath = "logo.png";
             ClassPathResource resource = new ClassPathResource(logoPath);
-            // Replace with actual image path
             ImageData imageData = ImageDataFactory.create(resource.getInputStream().readAllBytes());
-            Image logo = new Image(imageData).scaleToFit(60, 60).setFixedPosition(pdfDoc.getDefaultPageSize().getWidth() - 110, pdfDoc.getDefaultPageSize().getHeight() - 110);
+            Image logo = new Image(imageData).scaleToFit(60, 60)
+                    .setFixedPosition(pdfDoc.getDefaultPageSize().getWidth() - 110, pdfDoc.getDefaultPageSize().getHeight() - 110);
             document.add(logo);
 
             // Add Title
@@ -69,35 +70,67 @@ public class DocumentService {
                     .setFont(font)
                     .setFontSize(14)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(2)
                     .setMarginBottom(20);
 
             document.add(detail);
 
-            // Auto-adjusting table width to fill the page width
-            Table table = new Table(UnitValue.createPercentArray(headers.size())).useAllAvailableWidth();
+            if(!summaryHeaders.isEmpty()) {
+                // Dynamic column widths for summary table
+                float[] summaryColumnWidths = new float[summaryHeaders.size()];
+                Arrays.fill(summaryColumnWidths, 100f / summaryHeaders.size()); // Auto-fill equal widths
+                Table summaryTable = new Table(UnitValue.createPercentArray(summaryColumnWidths)).useAllAvailableWidth();
 
-            // Add headers with styling
+                // Add headers for summary table
+                for (String header : summaryHeaders) {
+                    Cell headerCell = new Cell().add(new Paragraph(header).setFont(font).setFontSize(12))
+                            .setBackgroundColor(ColorConstants.YELLOW)
+                            .setTextAlignment(TextAlignment.CENTER)
+                            .setPadding(5);
+                    summaryTable.addHeaderCell(headerCell);
+                }
+
+                // Add data to the summary table
+                for (String cellData : summaryData) {
+                    Cell cell = new Cell().add(new Paragraph(cellData).setFontSize(10))
+                            .setTextAlignment(TextAlignment.LEFT)
+                            .setPadding(5);
+                    summaryTable.addCell(cell);
+                }
+
+                // Add summary table to the document
+                document.add(summaryTable);
+            }
+
+            // Add white space between the two tables
+            document.add(new Paragraph().setMarginBottom(15)); // Creates space between tables
+
+            // Dynamic column widths for main table
+            float[] dataColumnWidths = new float[headers.size()];
+            log.info("see data colum width: {}", dataColumnWidths);
+            Arrays.fill(dataColumnWidths, 100f / headers.size()); // Auto-fill equal widths
+            Table tableData = new Table(UnitValue.createPercentArray(dataColumnWidths)).useAllAvailableWidth();
+
+            // Add headers for main table
             for (String header : headers) {
                 Cell headerCell = new Cell().add(new Paragraph(header).setFont(font).setFontSize(12))
                         .setBackgroundColor(ColorConstants.YELLOW)
                         .setTextAlignment(TextAlignment.CENTER)
                         .setPadding(5);
-                table.addHeaderCell(headerCell);
+                tableData.addHeaderCell(headerCell);
             }
 
-            // Add data to the table
+            // Add data to the main table
             for (List<String> row : data) {
                 for (String cellData : row) {
                     Cell cell = new Cell().add(new Paragraph(cellData).setFontSize(10))
                             .setTextAlignment(TextAlignment.LEFT)
                             .setPadding(5);
-                    table.addCell(cell);
+                    tableData.addCell(cell);
                 }
             }
 
-            // Add table to document
-            document.add(table);
+            // Add main table to the document
+            document.add(tableData);
 
             // Close document
             document.close();

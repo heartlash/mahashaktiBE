@@ -20,7 +20,7 @@ public class DocumentController implements DocumentApi {
     @Override
     public ResponseEntity<Object> postGenerateDocument(DocumentData documentData) {
         byte[] documentByteDate = documentService.generateDocument(documentData.getName(), documentData.getDetails(),
-                documentData.getHeaders(), documentData.getData());
+                documentData.getHeaders(), documentData.getData(), documentData.getSummaryHeaders(), documentData.getSummaryData());
 
         HttpHeaders headersHttp = new HttpHeaders();
         headersHttp.setContentType(MediaType.APPLICATION_PDF);
