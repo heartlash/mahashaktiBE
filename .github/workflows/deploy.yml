@@ -51,7 +51,7 @@ jobs:
 
       - name: Deploy to Mahashakti-Server
         run: |
-          ssh -o StrictHostKeyChecking=no -i mahashakti-server-key.pem ubuntu@13.201.73.202 "
+          ssh -o StrictHostKeyChecking=no -i mahashakti-server-key.pem ubuntu@15.207.117.182 "
             docker pull heartlash/mahashaktibe:latest &&
             docker stop mahashakti-app || true &&
             docker rm mahashakti-app || true &&
