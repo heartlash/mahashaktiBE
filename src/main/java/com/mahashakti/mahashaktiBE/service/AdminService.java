@@ -3,17 +3,18 @@ package com.mahashakti.mahashaktiBE.service;
 import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
-import com.mahashakti.mahashaktiBE.entities.VendorEntity;
+import com.mahashakti.mahashaktiBE.entities.ShedEntity;
+import com.mahashakti.mahashaktiBE.exception.InvalidDataStateException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.OperationalExpenseItemRepository;
+import com.mahashakti.mahashaktiBE.repository.ShedsRepository;
 import com.mahashakti.mahashaktiBE.repository.UnitRepository;
-import com.mahashakti.mahashaktiBE.repository.VendorRepository;
 import com.mahashakti.mahashaktiBe.model.Material;
 import com.mahashakti.mahashaktiBe.model.OperationalExpenseItem;
 import com.mahashakti.mahashaktiBe.model.Unit;
-import com.mahashakti.mahashaktiBe.model.Vendor;
+import com.mahashakti.mahashaktiBe.model.Shed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -27,9 +28,10 @@ import java.util.Optional;
 public class AdminService {
 
     private final UnitRepository unitRepository;
-    private final VendorRepository vendorRepository;
     private final MaterialRepository materialRepository;
     private final OperationalExpenseItemRepository operationalExpenseItemRepository;
+    private final ShedsRepository shedsRepository;
+    private final FlockService flockService;
 
 
     public UnitEntity addUnit(Unit unit) {
@@ -138,5 +140,37 @@ public class AdminService {
         operationalExpenseItemRepository.deleteById(operationalExpenseItemId);
 
     }
+
+    public ShedEntity addShed(Shed shed) {
+        ShedEntity shedEntity = new ShedEntity();
+        BeanUtils.copyProperties(shed, shedEntity);
+        return shedsRepository.save(shedEntity);
+    }
+
+    public ShedEntity updateShed(Integer shedId, Shed shed) {
+
+        if(!shedId.equals(shed.getId())) throw new MismatchException("Shed ID Mismatch in Put Request");
+
+        Optional<ShedEntity> shedOptional = shedsRepository.findById(shedId);
+        if(shedOptional.isEmpty())
+            throw new ResourceNotFoundException(String.format("Shed Resource Not Found: %d", shedId));
+
+        ShedEntity shedEntity = new ShedEntity();
+        BeanUtils.copyProperties(shed, shedEntity);
+        return shedsRepository.save(shedEntity);
+    }
+
+    public void deleteShed(Integer shedId) {
+        if(flockService.getFlockShedCount(shedId).getCount() == 0) {
+            Optional<ShedEntity> shedOptional = shedsRepository.findById(shedId);
+            if (shedOptional.isEmpty())
+                throw new ResourceNotFoundException(String.format("Shed Resource Not Found: %d", shedId));
+            shedsRepository.deleteById(shedId);
+        } else {
+            throw new InvalidDataStateException(String.format("Flock count not zero for :%d", shedId));
+        }
+
+    }
+
 
 }

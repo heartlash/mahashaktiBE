@@ -12,4 +12,5 @@ public interface MaterialConsumptionRepository extends JpaRepository<MaterialCon
     List<MaterialConsumptionEntity> findByConsumptionDateBetweenOrderByConsumptionDateAsc(Date startDate, Date endDate);
     List<MaterialConsumptionEntity> findByConsumptionDateBetweenAndMaterialId(Date startDate, Date endDate, Integer materialId);
     List<MaterialConsumptionEntity> getByConsumptionDate(Date consumptionDate);
+    List<MaterialConsumptionEntity> getByConsumptionDateAndShedId(Date consumptionDate, Integer shedId);
 }

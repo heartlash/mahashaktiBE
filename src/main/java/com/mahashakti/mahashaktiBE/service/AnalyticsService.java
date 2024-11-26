@@ -9,17 +9,24 @@ import com.mahashakti.mahashaktiBE.repository.SaleRepository;
 import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
+import com.mahashakti.mahashaktiBe.model.PriceRecommendation;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @Slf4j
@@ -33,6 +40,9 @@ public class AnalyticsService {
     private final DataService dataService;
     private final FlockService flockService;
     private final MaterialStockCalculator materialStockCalculator;
+
+    private List<PriceRecommendation> cachedPriceRecommendations;
+    private LocalDate lastExecutedDate;
 
     private Integer currentEggStockCount = 0;
 
@@ -72,6 +82,7 @@ public class AnalyticsService {
     }
 
     public List<MaterialInStock> getMaterialInStock() {
+
         return dataService.getMaterialStock().stream().map(materialStockEntity -> {
             MaterialInStock materialInStock = new MaterialInStock();
             materialInStock.setMaterialId(materialStockEntity.getMaterialId());
@@ -83,11 +94,11 @@ public class AnalyticsService {
 
             materialInStock.setLowStock(materialStockEntity.getMinQuantity().compareTo(materialStockEntity.getQuantity()) < 0);
 
-            Integer flockCount = flockService.getFlockCount().getCount();
             materialInStock.setExpectedDailyConsumption(
-                    materialStockCalculator.getDailyExpectedMaterialConsumption(materialStockEntity.getMaterial().getName(), flockCount));
+                    materialStockCalculator.getDailyExpectedMaterialConsumption(
+                            materialStockEntity.getMaterial().getName(), flockService.getFlockCountMap()));
 
-            materialInStock.setWouldLastFor(materialStockCalculator.stockLastDay(materialStockEntity.getMaterialId(), flockCount));
+            materialInStock.setWouldLastFor(materialStockCalculator.stockLastDay(materialStockEntity.getMaterialId(),  flockService.getFlockCountMap()));
             materialInStock.setLastRestockDate(materialStockEntity.getLastRestockDate());
             materialInStock.setLastRestockQuantity(materialStockEntity.getLastRestockQuantity());
             return materialInStock;
@@ -98,7 +109,7 @@ public class AnalyticsService {
     public EggCount getAnalyticsEggStock() {
         if(currentEggStockCount <= 0) {
             try {
-                Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateAsc(
+                Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateDesc(
                                 new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
                         .stream()
                         .map(ProductionEntity::getSaleableCount)
@@ -124,4 +135,48 @@ public class AnalyticsService {
         currentEggStockCount-=decreaseCount;
     }
 
+    public List<PriceRecommendation> getPriceRecommendation() {
+
+        if (lastExecutedDate != null && lastExecutedDate.equals(LocalDate.now()) && cachedPriceRecommendations != null)
+            return cachedPriceRecommendations;
+
+        List<PriceRecommendation> priceRecommendationList = new ArrayList<>();
+
+        List<String> urls = List.of("https://eggrate.in/s/Andhra_Pradesh", "https://eggrate.in/z/Barwala");
+
+        for (String url : urls) {
+            PriceRecommendation priceRecommendation = new PriceRecommendation();
+            try {
+                Document doc = Jsoup.connect(url).get();
+                Element priceElement = doc.select("table.table.table-striped.border tbody tr:nth-child(1) td:nth-child(2)").first();
+                String region = url.substring(url.lastIndexOf("/") + 1).replace("_", " ");
+
+                if (priceElement != null) {
+                    priceRecommendation.setRegion(region);
+                    BigDecimal price = new BigDecimal(priceElement.text().substring(1));
+                    priceRecommendation.setEggPrice(price);
+                    priceRecommendation.setCartonPrice(price.multiply(new BigDecimal(210)));
+                    priceRecommendation.setCartonPriceWithTransportation(price.add(new BigDecimal(1)).multiply(new BigDecimal(210)));
+                    priceRecommendation.setTransportationCharge(new BigDecimal(1));
+                    priceRecommendation.setPremiumCharge(new BigDecimal("0.7"));
+                    priceRecommendation.setRecommendedEggPrice(priceRecommendation.getEggPrice()
+                            .add(priceRecommendation.getTransportationCharge())
+                            .add(priceRecommendation.getPremiumCharge()));
+                    priceRecommendation.setRecommendedCartonPrice(priceRecommendation.getRecommendedEggPrice()
+                            .multiply(new BigDecimal(210))
+                    );
+                    priceRecommendationList.add(priceRecommendation);
+                }
+            } catch (Exception e) {
+                log.error("Failed to scrap site for egg price: {}", e.toString());
+
+            }
+        }
+
+        cachedPriceRecommendations = priceRecommendationList;
+        lastExecutedDate = LocalDate.now();
+
+        return priceRecommendationList;
+
+    }
 }

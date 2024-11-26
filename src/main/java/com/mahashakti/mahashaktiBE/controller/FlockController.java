@@ -32,15 +32,17 @@ public class FlockController implements FlockApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Flock DELETED", "SUCCESS", null);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
     @Override
-    public ResponseEntity<MahashaktiResponse> getFlock(Date startDate, Date endDate) {
-        List<FlockEntity> flockEntityList = flockService.getFlocks(startDate, endDate);
+    public ResponseEntity<MahashaktiResponse> getFlock(Date startDate, Date endDate, Integer shedId) {
+        List<FlockEntity> flockEntityList = flockService.getFlocks(startDate, endDate, shedId);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Flock FETCHED", "SUCCESS", flockEntityList);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
     @Override
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
@@ -49,7 +51,17 @@ public class FlockController implements FlockApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Flock Count FETCHED", "SUCCESS", flockCount);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getFlockShedCount(Integer shedId) {
+        FlockCount flockCount = flockService.getFlockShedCount(shedId);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Flock Shed Count FETCHED", "SUCCESS", flockCount);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> getFlockFlockDataId(UUID flockDataId) {
@@ -58,7 +70,8 @@ public class FlockController implements FlockApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Flock FETCHED", "SUCCESS", flockEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
     @Override
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
@@ -68,7 +81,8 @@ public class FlockController implements FlockApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE201", "Flock ADDED", "SUCCESS", flockEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
 
     @Override
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
@@ -78,5 +92,6 @@ public class FlockController implements FlockApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE202", "Flock UPDATED", "SUCCESS", flockEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
+    }
 }

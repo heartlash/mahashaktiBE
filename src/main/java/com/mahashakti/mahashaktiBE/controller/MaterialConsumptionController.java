@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -86,8 +88,13 @@ public class MaterialConsumptionController implements MaterialConsumptionApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> postDailyMaterialConsumption(DailyConsumption dailyConsumption) {
+
+        Map<Integer, Integer> shedToFlock = Collections.singletonMap(
+                dailyConsumption.getShedId(),
+                dailyConsumption.getFlockCount());
+
         List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionService.postDailyMaterialConsumption(
-                dailyConsumption.getFlockCount(), dailyConsumption.getProductionDate());
+                shedToFlock, dailyConsumption.getProductionDate());
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE201", "Daily Material Consumption CREATED", "SUCCESS", materialConsumptionEntityList);
@@ -97,7 +104,7 @@ public class MaterialConsumptionController implements MaterialConsumptionApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> deleteMaterialConsumptionDaily(DailyConsumption dailyConsumption) {
-        materialConsumptionService.deleteMaterialConsumptionByConsumptionDate(dailyConsumption.getProductionDate());
+        materialConsumptionService.deleteMaterialConsumptionByConsumptionDate(dailyConsumption.getShedId(), dailyConsumption.getProductionDate());
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Daily Material Consumption DELETED", "SUCCESS", null);

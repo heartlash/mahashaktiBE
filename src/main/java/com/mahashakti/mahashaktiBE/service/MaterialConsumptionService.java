@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.ArrayList;
@@ -49,17 +51,24 @@ public class MaterialConsumptionService {
             BeanUtils.copyProperties(materialConsumption, materialConsumptionEntity);
 
             materialConsumptionEntity.setMaterial(dataService.getMaterialById(materialConsumption.getMaterialId()));
+            materialConsumptionEntity.setShed(dataService.getShedById(materialConsumption.getShedId()));
 
             MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialConsumption.getMaterialId());
+
+            if(materialStockEntity.getQuantity().compareTo(new BigDecimal(0)) == 0) return null;
+
             BigDecimal stockQuantity = materialStockEntity.getQuantity().subtract(materialConsumption.getQuantity());
-            if(stockQuantity.compareTo(BigDecimal.ZERO) < 0) throw new InvalidDataStateException(
-                    "Final Stock Value Cannot Be Negative:"
-            );
-            materialStockEntity.setQuantity(stockQuantity);
+
+            if(stockQuantity.compareTo(BigDecimal.ZERO) < 0) {
+                materialConsumptionEntity.setQuantity(materialStockEntity.getQuantity());
+                materialStockEntity.setQuantity(new BigDecimal(0));
+            }
+            else
+                materialStockEntity.setQuantity(stockQuantity);
             materialStockEntityList.add(materialStockEntity);
 
             return materialConsumptionEntity;
-        }).toList();
+        }).filter(Objects::nonNull).toList();
 
         materialStockRepository.saveAll(materialStockEntityList);
         return materialConsumptionRepository.saveAll(materialConsumptionEntityList);
@@ -122,7 +131,7 @@ public class MaterialConsumptionService {
         materialConsumptionRepository.deleteById(consumptionId);
     }
 
-    public List<MaterialConsumptionEntity> postDailyMaterialConsumption(Integer flockCount, Date productionDate) {
+    public List<MaterialConsumptionEntity> postDailyMaterialConsumption(Map<Integer, Integer> flockToShed, Date productionDate) {
 
         List<MaterialConsumption> materialConsumptionList = dataService.getMaterials().stream().map(materialEntity -> {
             MaterialConsumption materialConsumption = new MaterialConsumption();
@@ -130,7 +139,8 @@ public class MaterialConsumptionService {
             materialConsumption.setConsumptionDate(productionDate);
             materialConsumption.setMaterialId(materialEntity.getId());
             materialConsumption.setQuantity(materialStockCalculator
-                    .getDailyExpectedMaterialConsumption(materialEntity.getName(), flockCount));
+                    .getDailyExpectedMaterialConsumption(materialEntity.getName(), flockToShed));
+            materialConsumption.setShedId(flockToShed.keySet().stream().toList().getFirst());
             materialConsumption.setCreatedAt(new Date());
             materialConsumption.setCreatedBy("Mahashakti System");
 
@@ -140,10 +150,11 @@ public class MaterialConsumptionService {
         return postMaterialConsumptions(materialConsumptionList);
     }
 
-    public void deleteMaterialConsumptionByConsumptionDate(Date consumptionDate) {
+    public void deleteMaterialConsumptionByConsumptionDate(Integer shedId, Date consumptionDate) {
 
-        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionRepository.getByConsumptionDate(consumptionDate);
-
+        List<MaterialConsumptionEntity> materialConsumptionEntityList = materialConsumptionRepository.getByConsumptionDateAndShedId(consumptionDate, shedId);
+        if(materialConsumptionEntityList.isEmpty())
+            throw new ResourceNotFoundException(String.format("Resource Not Found for shed %d production date %s", shedId, consumptionDate));
         materialConsumptionEntityList.forEach(materialConsumptionEntity -> {
             deleteMaterialConsumptionById(materialConsumptionEntity.getId());
         });

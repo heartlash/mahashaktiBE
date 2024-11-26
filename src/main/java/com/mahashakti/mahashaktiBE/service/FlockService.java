@@ -1,6 +1,7 @@
 package com.mahashakti.mahashaktiBE.service;
 
 import com.mahashakti.mahashaktiBE.entities.FlockEntity;
+import com.mahashakti.mahashaktiBE.entities.ShedEntity;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.FlockRepository;
@@ -8,6 +9,7 @@ import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.Flock;
 import com.mahashakti.mahashaktiBe.model.FlockCount;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,16 +19,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.HashMap;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Data
 public class FlockService {
 
     private final FlockRepository flockRepository;
     private final MaterialStockCalculator materialStockCalculator;
+    private final DataService dataService;
 
     public Integer flockCount = 0;
+    public HashMap<Integer, Integer> flockCountMap = new HashMap<>();
 
     public FlockEntity addFlock(Flock flock) {
 
@@ -34,11 +40,13 @@ public class FlockService {
         BeanUtils.copyProperties(flock, flockEntity);
 
         flockEntity.setCount(flock.getAdded() ? flock.getCount() : -flock.getCount());
-
+        flockEntity.setShed(dataService.getShedById(flock.getShedId()));
         FlockEntity flockEntitySaved = flockRepository.save(flockEntity);
 
         flockCount+=flockEntity.getCount();
-        materialStockCalculator.updateMinimumStockQuantity(flockCount);
+        flockCountMap.put(flock.getShedId(), flockCountMap.getOrDefault(flock.getShedId(), 0) + flockEntity.getCount());
+
+        materialStockCalculator.updateMinimumStockQuantity(flockCountMap);
 
         return flockEntitySaved;
     }
@@ -51,15 +59,20 @@ public class FlockService {
         return flockEntityOptional.get();
     }
 
-    public List<FlockEntity> getFlocks(Date startDate, Date endDate) {
-        return flockRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
+    public List<FlockEntity> getFlocks(Date startDate, Date endDate, Integer shedId) {
+        if(shedId == null) return  flockRepository.findByDateBetweenOrderByDateAsc(startDate, endDate);
+        else return flockRepository.findByDateBetweenAndShedIdOrderByDateAsc(startDate, endDate, shedId);
     }
 
     public void deleteFlock(UUID flockDataID) {
         FlockEntity flockEntity = getFlock(flockDataID);
         flockRepository.deleteById(flockDataID);
+
         flockCount-=flockEntity.getCount();
-        materialStockCalculator.updateMinimumStockQuantity(flockCount);
+        Integer shedId = flockEntity.getShed().getId();
+        flockCountMap.put(shedId, flockCountMap.getOrDefault(shedId, 0) - flockEntity.getCount());
+
+        materialStockCalculator.updateMinimumStockQuantity(flockCountMap);
     }
 
     public FlockEntity updateFlock(UUID flockDataId, Flock flock) {
@@ -73,28 +86,45 @@ public class FlockService {
         BeanUtils.copyProperties(flock, flockEntityInDb, "createdBy", "createdAt");
 
         flockEntityInDb.setCount(flock.getAdded() ? flock.getCount() : -flock.getCount());
+        flockEntityInDb.setShed(dataService.getShedById(flock.getShedId()));
 
         FlockEntity flockEntitySaved = flockRepository.save(flockEntityInDb);
 
-        if(prevCount > 0) flockCount = flockCount - prevCount;
-        else flockCount = flockCount + Math.abs(prevCount);
+        Integer shedId = flock.getShedId();
+
+        if(prevCount > 0) {
+            flockCount = flockCount - prevCount;
+            flockCountMap.put(shedId, flockCountMap.get(shedId) - prevCount);
+        }
+        else {
+            flockCount = flockCount + Math.abs(prevCount);
+            flockCountMap.put(shedId, flockCountMap.get(shedId) + Math.abs(prevCount));
+        }
 
         flockCount += flockEntityInDb.getCount();
-        materialStockCalculator.updateMinimumStockQuantity(flockCount);
+        flockCountMap.put(shedId, flockCountMap.get(shedId) + flockEntityInDb.getCount());
+
+        materialStockCalculator.updateMinimumStockQuantity(flockCountMap);
 
         return flockEntitySaved;
     }
 
     @PostConstruct
     public FlockCount getFlockCount() {
-        if(flockCount <= 0)
-            try {
-                flockCount = flockRepository.findAll().stream().mapToInt(FlockEntity::getCount).sum();
-            } catch (Exception e) {
-                log.error("Failed to calculate flock count: {}", e.toString());
-            }
 
+        if(flockCountMap.isEmpty()) {
+            List<FlockEntity> flockEntityList = flockRepository.findAll();
+            for (FlockEntity flockEntity : flockEntityList) {
+                int shedId = flockEntity.getShed().getId();
+                int count = flockEntity.getCount();
+                flockCountMap.put(shedId, flockCountMap.getOrDefault(shedId, 0) + count);
+                flockCount+=count;
+            }
+        }
         return new FlockCount(flockCount);
     }
 
+    public FlockCount getFlockShedCount(Integer shedId) {
+        return new FlockCount(flockCountMap.get(shedId));
+    }
 }

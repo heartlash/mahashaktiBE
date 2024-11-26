@@ -4,6 +4,7 @@ import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
+import com.mahashakti.mahashaktiBE.entities.ShedEntity;
 import com.mahashakti.mahashaktiBE.service.DataService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.DataApi;
@@ -132,4 +133,23 @@ public class DataController implements DataApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<MahashaktiResponse> getSheds() {
+        List<ShedEntity> shedEntityList = dataService.getSheds();
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Sheds Fetched", "SUCCESS", shedEntityList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getShed(Integer shedId) {
+        ShedEntity shedEntity = dataService.getShedById(shedId);
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Sheds Fetched", "SUCCESS", shedEntity);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 }

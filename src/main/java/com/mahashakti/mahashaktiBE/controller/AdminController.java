@@ -4,6 +4,7 @@ import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
+import com.mahashakti.mahashaktiBE.entities.ShedEntity;
 import com.mahashakti.mahashaktiBE.service.AdminService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.AdminApi;
@@ -12,13 +13,13 @@ import com.mahashakti.mahashaktiBe.model.Vendor;
 import com.mahashakti.mahashaktiBe.model.Unit;
 import com.mahashakti.mahashaktiBe.model.OperationalExpenseItem;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
+import com.mahashakti.mahashaktiBe.model.Shed;
 
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -82,7 +83,8 @@ public class AdminController implements AdminApi {
         OperationalExpenseItemEntity operationalExpenseItemEntity = adminService.addOperationalExpenseItem(operationalExpenseItem);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE201", "Operational Expense Item ADDED", "SUCCESS", operationalExpenseItemEntity);
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> putAdminOperationalExpenseItemItemId(Integer itemId, OperationalExpenseItem operationalExpenseItem) {
@@ -90,7 +92,8 @@ public class AdminController implements AdminApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE202", "Operational Expense Item UPDATED", "SUCCESS", operationalExpenseItemEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> deleteAdminOperationalExpenseItemItemId(Integer itemId) {
@@ -98,6 +101,29 @@ public class AdminController implements AdminApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Operational Expense Item DELETED", "SUCCESS", null);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
+    @Override
+    public ResponseEntity<MahashaktiResponse> postShed(Shed shed) {
+        ShedEntity shedEntity = adminService.addShed(shed);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE201", "Shed ADDED", "SUCCESS", shedEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> putShed(Integer shedId, Shed shed) {
+        ShedEntity shedEntity = adminService.updateShed(shedId, shed);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE202", "Shed UPDATED", "SUCCESS", shedEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> deleteShed(Integer shedId) {
+        adminService.deleteShed(shedId);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Shed DELETED", "SUCCESS", null);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 }

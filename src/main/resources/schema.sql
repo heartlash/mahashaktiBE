@@ -42,6 +42,7 @@ CREATE TABLE users (
 
 CREATE TABLE flocks (
     id UUID PRIMARY KEY,
+    shed_id INTEGER REFERENCES sheds(id) NOT NULL,
     count INTEGER NOT NULL,
     remarks VARCHAR NOT NULL,
     date TIMESTAMP NOT NULL,
@@ -55,6 +56,7 @@ CREATE TABLE production (
     id UUID PRIMARY KEY,
     produced_count INTEGER NOT NULL,
     production_percentage DOUBLE PRECISION NOT NULL,
+    shed_id INTEGER REFERENCES sheds(id) NOT NULL,
     broken_count INTEGER NOT NULL,
     broken_reason VARCHAR(100) NOT NULL,
     self_use_count INTEGER NOT NULL,
@@ -99,6 +101,7 @@ CREATE TABLE material_consumption (
     id UUID PRIMARY KEY,
     material_id INTEGER REFERENCES materials(id),
     quantity DOUBLE PRECISION NOT NULL,
+    shed_id INTEGER REFERENCES sheds(id),
     consumption_date TIMESTAMP NOT NULL,
     created_by VARCHAR(50),
     updated_by VARCHAR(50),
@@ -129,4 +132,27 @@ CREATE TABLE material_restock (
     updated_at TIMESTAMP
 );
 
+CREATE TABLE sheds (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50),
+    active BOOLEAN NOT NULL,
+    baby BOOLEAN NOT NULL,
+    genesis_date TIMESTAMP
+);
 
+CREATE TABLE feed_composition (
+    id UUID PRIMARY KEY,
+    shed_id INTEGER REFERENCES sheds(id),
+    material_id INTEGER REFERENCES materials(id),
+    quantity_per_tonne DOUBLE PRECISION NOT NULL,
+    updated_by VARCHAR(50),
+    updated_at TIMESTAMP
+);
+
+CREATE TABLE feed_quantity (
+    id SERIAL PRIMARY KEY,
+    shed_id INTEGER REFERENCES sheds(id),
+    quantity_per_bird DOUBLE PRECISION NOT NULL,
+    updated_by VARCHAR(50),
+    updated_at TIMESTAMP
+);

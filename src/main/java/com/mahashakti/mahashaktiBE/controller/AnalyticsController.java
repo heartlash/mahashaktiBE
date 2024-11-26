@@ -7,6 +7,8 @@ import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
 import com.mahashakti.mahashaktiBe.model.ProjectedProfits;
+import com.mahashakti.mahashaktiBe.model.PriceRecommendation;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +55,12 @@ public class AnalyticsController implements AnalyticsApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<MahashaktiResponse> getAnalyticsPriceRecommendation() {
+        List<PriceRecommendation> priceRecommendationList = analyticsService.getPriceRecommendation();
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Price Recommendation FETCHED", "SUCCESS", priceRecommendationList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 }

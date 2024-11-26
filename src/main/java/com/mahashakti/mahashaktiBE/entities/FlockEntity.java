@@ -7,6 +7,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 
 
 import lombok.Data;
@@ -26,6 +29,10 @@ public class FlockEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "shed_id", referencedColumnName = "id", nullable = false)
+    private ShedEntity shed;
 
     @Column(name = "count", nullable = false)
     private Integer count;

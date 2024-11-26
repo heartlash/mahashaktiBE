@@ -630,6 +630,40 @@ paths:
             schema:
               $ref: '#/components/schemas/Production'
     parameters: []
+  '/production/shed/{shedId}':
+    get:
+      summary: Production
+      tags:
+        - Production
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-production-shedId
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+          required: true
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+          required: true
+      x-stoplight:
+        id: p7cgqyfqr8xhi
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
   /production/latest:
     get:
       summary: Production
@@ -949,8 +983,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/MahashaktiResponse'
       operationId: get-analytics-projected-profits
-      x-stoplight:
-        id: 7nse9rjm4ofzu
       parameters:
         - schema:
             type: string
@@ -962,6 +994,25 @@ paths:
             format: date
           in: query
           name: endDate
+      x-stoplight:
+        id: 95d8p2ljhzu9x
+    parameters: []
+  /analytics/price-recommendation:
+    get:
+      summary: Price recommendation
+      tags:
+        - Analytics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-analytics-price-recommendation
+      x-stoplight:
+        id: 7nse9rjm4ofzu
+      parameters: []
     parameters: []
   /flock:
     get:
@@ -991,6 +1042,10 @@ paths:
           in: query
           name: endDate
           required: true
+        - schema:
+            type: integer
+          in: query
+          name: shedId
     post:
       summary: Flock data
       tags:
@@ -1028,6 +1083,27 @@ paths:
       x-stoplight:
         id: ge81kbeq6ch7l
     parameters: []
+  '/flock/shed/{shedId}/count':
+    get:
+      summary: Flock shed count
+      tags:
+        - Flock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-flock-shed-count
+      x-stoplight:
+        id: uc4uu1y9ffatq
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
   '/flock/{flockDataId}':
     parameters:
       - schema:
@@ -1195,6 +1271,267 @@ paths:
             schema:
               type: object
               $ref: '#/components/schemas/Login'
+  /admin/shed:
+    post:
+      summary: add shed
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-shed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shed'
+      x-stoplight:
+        id: 2vfjevy8l964x
+    parameters: []
+  '/admin/shed/{shedId}':
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
+    delete:
+      summary: shed
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-shed
+      x-stoplight:
+        id: phio3gbi26axt
+    put:
+      summary: shed
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-shed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shed'
+      x-stoplight:
+        id: ilh0cv23q6vmp
+  /feed/composition:
+    get:
+      summary: feed composition
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-feed-composition
+      x-stoplight:
+        id: ennen3n3xpt9x
+    post:
+      summary: add feed composition
+      tags:
+        - Feed
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-feed-composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedComposition'
+      x-stoplight:
+        id: e1lvkrkjwwb0t
+    parameters: []
+  '/feed/composition/{id}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: id
+        in: path
+        required: true
+    put:
+      summary: feed composition
+      tags:
+        - Feed
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-feed-composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedComposition'
+      x-stoplight:
+        id: ufqc09jk4vjsr
+    delete:
+      summary: feed composition
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-feed-composition
+      x-stoplight:
+        id: bmvfrp6o7o86t
+  '/feed/composition/shed/{shedId}':
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
+    get:
+      summary: feed composition
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-feed-composition-shed-shedId
+      x-stoplight:
+        id: ufvks8bh6u3d4
+  /feed/quantity:
+    get:
+      summary: feed quantity
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-feed-quantity
+      x-stoplight:
+        id: yj0uuo3j0s0ue
+    post:
+      summary: add feed quantity
+      tags:
+        - Feed
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-feed-quantity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedQuantity'
+      x-stoplight:
+        id: m0obbokruhbz8
+    parameters: []
+  '/feed/quantity/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    put:
+      summary: feed quantity
+      tags:
+        - Feed
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-feed-quantity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedQuantity'
+      x-stoplight:
+        id: l7k8j1o591vl4
+    delete:
+      summary: feed quantity
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-feed-quantity
+      x-stoplight:
+        id: wspm4zwwz102b
+  '/feed/quantity/shed/{shedId}':
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
+    get:
+      summary: feed quantity
+      tags:
+        - Feed
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-feed-quantity-shed-shedId
+      x-stoplight:
+        id: 9dkb7nvos1sar
   /admin/material:
     post:
       summary: add material
@@ -1378,6 +1715,43 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OperationalExpenseItem'
+  /data/sheds:
+    get:
+      summary: Sheds
+      tags:
+        - Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-sheds
+      x-stoplight:
+        id: 1y5a0k37b9d28
+    parameters: []
+  '/data/sheds/{shedId}':
+    get:
+      summary: shed
+      tags:
+        - Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-shed
+      x-stoplight:
+        id: 477mrbvcum4v5
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
   /data/materials:
     get:
       summary: material
@@ -1799,6 +2173,98 @@ components:
           x-stoplight:
             id: 0ljyhovun8syl
           format: date-time
+    Shed:
+      title: Shed
+      x-stoplight:
+        id: 74qkyrk1baoxj
+      type: object
+      required:
+        - name
+        - active
+        - baby
+        - genesisDate
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          x-stoplight:
+            id: 8lnm81hesblto
+        active:
+          type: boolean
+          x-stoplight:
+            id: bwaxgf9q102lh
+        baby:
+          type: boolean
+          x-stoplight:
+            id: 4js7x0eq7i8an
+        genesisDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: 372o5uzu6rlpv
+    FeedComposition:
+      title: Feed Composition
+      x-stoplight:
+        id: iuu2pxvtgxmm0
+      type: object
+      required:
+        - shedId
+        - materialId
+        - quantityPerTonne
+        - updatedBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        shedId:
+          type: integer
+          x-stoplight:
+            id: z56cqiqgdbv43
+        materialId:
+          type: integer
+          x-stoplight:
+            id: uttuairmb3gdx
+        quantityPerTonne:
+          type: number
+          x-stoplight:
+            id: grvz60wdhnnll
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: zxud42q1f7vxv
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: h559kdf9czj7c
+          format: date
+    FeedQuantity:
+      title: Feed Quantity
+      x-stoplight:
+        id: siddrqpiteegd
+      type: object
+      required:
+        - shedId
+        - quantityPerBird
+        - updatedBy
+      properties:
+        id:
+          type: integer
+        shedId:
+          type: integer
+        quantityPerBird:
+          type: number
+          x-stoplight:
+            id: zbc2ud78hmk4h
+        updatedBy:
+          type: string
+          x-stoplight:
+            id: gbggvxtixanev
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: efx8dsnygc5yx
+          format: date
     DocumentData:
       title: DocumentData
       x-stoplight:
@@ -1905,6 +2371,7 @@ components:
       type: object
       required:
         - producedCount
+        - shedId
         - brokenCount
         - selfUseCount
         - giftCount
@@ -1919,6 +2386,11 @@ components:
           type: integer
           x-stoplight:
             id: v2g99vder7z13
+          minimum: 1
+        shedId:
+          type: integer
+          x-stoplight:
+            id: 3yi30kjhct5wx
           minimum: 1
         brokenCount:
           type: integer
@@ -1959,6 +2431,7 @@ components:
       required:
         - materialId
         - quantity
+        - shedId
         - consumptionDate
       properties:
         id:
@@ -1974,6 +2447,10 @@ components:
           type: number
           x-stoplight:
             id: 7y0tv2ug3d26l
+        shedId:
+          type: integer
+          x-stoplight:
+            id: a8uit1whyb40e
         consumptionDate:
           type: string
           x-stoplight:
@@ -2098,6 +2575,44 @@ components:
           type: number
           x-stoplight:
             id: 9vch6hf8ucr8d
+    PriceRecommendation:
+      title: PriceRecommendation
+      x-stoplight:
+        id: q88bexbtqyntt
+      type: object
+      properties:
+        region:
+          type: string
+          x-stoplight:
+            id: v7fb22cncrsw8
+        eggPrice:
+          type: number
+          x-stoplight:
+            id: 0s56sbjan9k9n
+        cartonPrice:
+          type: number
+          x-stoplight:
+            id: 3igzoo8v0apsx
+        cartonPriceWithTransportation:
+          type: number
+          x-stoplight:
+            id: uf3n8q85x0s78
+        premiumCharge:
+          type: number
+          x-stoplight:
+            id: pyc4rxx58rper
+        transportationCharge:
+          type: number
+          x-stoplight:
+            id: mzhfz39sori6q
+        recommendedEggPrice:
+          type: number
+          x-stoplight:
+            id: 84sfwaeety2aj
+        recommendedCartonPrice:
+          type: number
+          x-stoplight:
+            id: mc6jlodjj9x30
     Flock:
       title: Flock
       x-stoplight:
@@ -2115,6 +2630,10 @@ components:
           x-stoplight:
             id: ctljv6sqopv98
           format: uuid
+        shedId:
+          type: integer
+          x-stoplight:
+            id: t2z0lbmacx2om
         count:
           type: integer
           x-stoplight:
@@ -2244,6 +2763,10 @@ components:
               - $ref: '#/components/schemas/Login'
                 x-stoplight:
                   id: xqk2yhrhv7bnh
+              - type: object
+                $ref: '#/components/schemas/Shed'
+                x-stoplight:
+                  id: 0emd1b91dgz1s
             x-stoplight:
               id: k55ysh4yqznnr
         data:
@@ -2411,7 +2934,9 @@ components:
         id: vjf4tzwbyl404
       type: object
       required:
+        - flockCount
         - productionDate
+        - shedId
       properties:
         flockCount:
           type: integer
@@ -2422,5 +2947,9 @@ components:
           x-stoplight:
             id: y1thhs2wfyhmt
           format: date
+        shedId:
+          type: integer
+          x-stoplight:
+            id: zkiiewdcj3tjq
   requestBodies: {}
   responses: {}

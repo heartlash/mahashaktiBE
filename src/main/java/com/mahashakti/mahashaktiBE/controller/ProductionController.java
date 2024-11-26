@@ -36,6 +36,17 @@ public class ProductionController implements ProductionApi {
     }
 
     @Override
+    public ResponseEntity<MahashaktiResponse> getProductionShedId(Date startDate, Date endDate, Integer shedId) {
+        List<ProductionEntity> productionEntityList
+                = productionService.getAllProductionShedId(startDate, endDate, shedId);
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Production FETCHED", "SUCCESS", productionEntityList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<MahashaktiResponse> postProduction(Production production) {
         ProductionEntity productionEntity
                 = productionService.postProduction(production);
@@ -81,10 +92,10 @@ public class ProductionController implements ProductionApi {
 
     @Override
     public ResponseEntity<MahashaktiResponse> getProductionLatest() {
-        ProductionEntity productionEntity = productionService.getProductionLatest();
+        List<ProductionEntity> productionEntityList = productionService.getProductionLatest();
 
         MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Production Latest Fetched", "SUCCESS", productionEntity);
+                = Helper.createResponse("MSBE200", "Production Latest Fetched", "SUCCESS", productionEntityList);
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }

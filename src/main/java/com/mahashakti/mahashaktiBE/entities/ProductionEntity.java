@@ -30,6 +30,9 @@ public class ProductionEntity {
     @Column(name = "produced_count", nullable = false)
     private Integer producedCount;
 
+    @Column(name = "shed_id", nullable = false)
+    private Integer shedId;
+
     @Column(name = "production_percentage", nullable = false)
     private BigDecimal productionPercentage;
 

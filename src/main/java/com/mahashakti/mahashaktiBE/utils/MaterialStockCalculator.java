@@ -2,16 +2,15 @@ package com.mahashakti.mahashaktiBE.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-
-import com.mahashakti.mahashaktiBE.config.ConsumptionProperties;
 import com.mahashakti.mahashaktiBE.config.MinimumStockDaysProperties;
-import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
+import com.mahashakti.mahashaktiBE.entities.FeedCompositionEntity;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
+import com.mahashakti.mahashaktiBE.service.FeedService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,61 +23,86 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public  class MaterialStockCalculator {
 
-    private final ConsumptionProperties consumptionProperties;
     private final MinimumStockDaysProperties minimumStockDaysProperties;
     private final MaterialRepository materialRepository;
     private final MaterialStockRepository materialStockRepository;
+    private final FeedService feedService;
 
     @Transactional
-    public void updateMinimumStockQuantity(Integer currentFlockCount) {
+    public void updateMinimumStockQuantity(Map<Integer, Integer> shedToFlock) {
 
-        Set<String> allMaterials = consumptionProperties.getAdult().keySet();
 
-        allMaterials.forEach(material -> {
-            Optional<MaterialEntity> materialOptional = materialRepository.findByName(material);
+        materialRepository.findAll().forEach(materialEntity -> {
 
-            if (materialOptional.isPresent()) {
-                MaterialEntity materialEntity = materialOptional.get();
+            Optional<MaterialStockEntity> materialStockEntityOptional =
+                    materialStockRepository.findById(materialEntity.getId());
 
-                Optional<MaterialStockEntity> materialStockEntityOptional =
-                        materialStockRepository.findById(materialEntity.getId());
+            BigDecimal dailyExpectedMaterialConsumption = getDailyExpectedMaterialConsumption(materialEntity.getName(), shedToFlock);
 
-                BigDecimal minQuantity = consumptionProperties.getAdult().get(materialEntity.getName())
-                        .multiply(new BigDecimal(currentFlockCount))
-                        .multiply(new BigDecimal(minimumStockDaysProperties.getMaterials().get(materialEntity.getName())));
+            BigDecimal minQuantity = dailyExpectedMaterialConsumption
+                    .multiply(new BigDecimal(minimumStockDaysProperties.getMaterials().get(materialEntity.getName())));
 
-                if (materialStockEntityOptional.isPresent()) {
-                    materialStockEntityOptional.get().setMinQuantity(minQuantity);
-                    materialStockRepository.save(materialStockEntityOptional.get());
-                }
+            if (materialStockEntityOptional.isPresent()) {
+                materialStockEntityOptional.get().setMinQuantity(minQuantity);
+                materialStockRepository.save(materialStockEntityOptional.get());
             }
+
         });
     }
 
-    public Integer stockLastDay(Integer materialId, Integer currentFlockCount) {
+    public Integer stockLastDay(Integer materialId, Map<Integer, Integer> shedToFlock) {
 
         Optional<MaterialStockEntity> materialStockEntityOptional = materialStockRepository.findById(materialId);
+        if (materialStockEntityOptional.isEmpty()) return 0;
+        MaterialStockEntity materialStockEntity = materialStockEntityOptional.get();
 
-        if (materialStockEntityOptional.isPresent()) {
+        BigDecimal totalStock = materialStockEntity.getQuantity();
 
-            BigDecimal currentQuantity = materialStockEntityOptional.get().getQuantity();
+        String materialName = materialStockEntity.getMaterial().getName();
 
-            BigDecimal perBirdPerDay = consumptionProperties.getAdult().get(materialStockEntityOptional.get().getMaterial().getName());
-            if(perBirdPerDay.compareTo(new BigDecimal(0)) == 0) return 0;
+        BigDecimal dailyConsumption = getDailyExpectedMaterialConsumption(materialName, shedToFlock);
 
-            BigDecimal totalDailyConsumption = perBirdPerDay.multiply(new BigDecimal(currentFlockCount));
-            BigDecimal daysStockWillLast = totalDailyConsumption.compareTo(new BigDecimal(0)) == 0
-                    ? new BigDecimal(0) : currentQuantity.divide(totalDailyConsumption, RoundingMode.DOWN);
-
-            return daysStockWillLast.setScale(0, RoundingMode.DOWN).intValue();
+        if (dailyConsumption.compareTo(BigDecimal.ZERO) == 0) {
+            return 0;
         }
-        return 0;
 
-
+        BigDecimal stockLastsFor = totalStock.divide(dailyConsumption, RoundingMode.DOWN);
+        return stockLastsFor.intValue();
     }
 
-    public BigDecimal getDailyExpectedMaterialConsumption(String materialName, Integer currentFlockCount) {
-        BigDecimal materialConsumptionPerBird = consumptionProperties.getAdult().get(materialName);
-        return materialConsumptionPerBird.multiply(new BigDecimal(currentFlockCount));
+
+    public BigDecimal getDailyExpectedMaterialConsumption(String materialName,
+                                                          Map<Integer, Integer> shedToFlock) {
+
+        BigDecimal dailyExpectedMaterialConsumption = BigDecimal.ZERO;
+
+        for (Integer shedId : shedToFlock.keySet()) {
+
+            BigDecimal feedPerBirdInGrams = feedService.getFeedQuantityShedShedId(shedId).getQuantityPerBird();
+            BigDecimal feedPerBirdInTonne = feedPerBirdInGrams.divide(new BigDecimal(1000000));
+
+            BigDecimal totalFeedForBirdInShed = feedPerBirdInTonne.multiply(new BigDecimal(shedToFlock.get(shedId)));
+
+            FeedCompositionEntity feedCompositionEntity = feedService.getFeedCompositionShedShedId(shedId)
+                    .stream()
+                    .filter(feedComposition -> feedComposition.getMaterial().getName().equals(materialName))
+                    .findFirst().get();
+
+            String materialUnit = feedCompositionEntity.getMaterial().getUnit().getName();
+            BigDecimal materialRatio = new BigDecimal(0);
+
+            if (materialUnit.equalsIgnoreCase("Kilogram")) {
+                materialRatio = feedCompositionEntity.getQuantityPerTonne().divide(BigDecimal.valueOf(1000));
+                totalFeedForBirdInShed = totalFeedForBirdInShed.multiply(new BigDecimal(1000));
+            } else if (materialUnit.equalsIgnoreCase("Tonne")) {
+                materialRatio = feedCompositionEntity.getQuantityPerTonne();
+            }
+
+            BigDecimal shedDailyExpectedMaterialConsumption = totalFeedForBirdInShed.multiply(materialRatio);
+
+            dailyExpectedMaterialConsumption = dailyExpectedMaterialConsumption.add(shedDailyExpectedMaterialConsumption);
+        }
+
+        return dailyExpectedMaterialConsumption;
     }
 }
