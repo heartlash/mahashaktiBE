@@ -22,7 +22,7 @@ logging:
     org.springframework.security: INFO
 
 datasource:
-  url: jdbc:postgresql://15.207.117.182:5432/mahashakti
+  url: jdbc:postgresql://13.202.82.152:5432/mahashakti
   driverClassName: org.postgresql.Driver
   username: msuser
   password: mspassword
