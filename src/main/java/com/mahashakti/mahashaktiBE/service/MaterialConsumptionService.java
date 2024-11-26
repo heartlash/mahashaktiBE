@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class MaterialConsumptionService {
             BeanUtils.copyProperties(materialConsumption, materialConsumptionEntity);
 
             materialConsumptionEntity.setMaterial(dataService.getMaterialById(materialConsumption.getMaterialId()));
-            materialConsumptionEntity.setShed(dataService.getShedById(materialConsumption.getShedId()));
+            if(!ObjectUtils.isEmpty(materialConsumption.getShedId())) materialConsumptionEntity.setShed(dataService.getShedById(materialConsumption.getShedId()));
 
             MaterialStockEntity materialStockEntity = dataService.getMaterialStockById(materialConsumption.getMaterialId());
 
