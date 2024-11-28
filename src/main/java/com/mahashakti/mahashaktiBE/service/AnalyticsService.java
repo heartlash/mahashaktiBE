@@ -158,7 +158,7 @@ public class AnalyticsService {
                     priceRecommendation.setCartonPrice(price.multiply(new BigDecimal(210)));
                     priceRecommendation.setCartonPriceWithTransportation(price.add(new BigDecimal(1)).multiply(new BigDecimal(210)));
                     priceRecommendation.setTransportationCharge(new BigDecimal(1));
-                    priceRecommendation.setPremiumCharge(new BigDecimal("0.7"));
+                    priceRecommendation.setPremiumCharge(new BigDecimal("0.4"));
                     priceRecommendation.setRecommendedEggPrice(priceRecommendation.getEggPrice()
                             .add(priceRecommendation.getTransportationCharge())
                             .add(priceRecommendation.getPremiumCharge()));
