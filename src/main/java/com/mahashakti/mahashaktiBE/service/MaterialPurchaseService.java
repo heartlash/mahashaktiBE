@@ -3,12 +3,11 @@ package com.mahashakti.mahashaktiBE.service;
 
 import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
-import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
 import com.mahashakti.mahashaktiBE.exception.MahashaktiException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialPurchaseRepository;
-import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
+import com.mahashakti.mahashaktiBe.model.LatestMaterialPurchase;
 import com.mahashakti.mahashaktiBe.model.MaterialPurchase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +20,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Date;
 import java.util.Objects;
-import java.util.ArrayList;
-
-
-
+import java.util.Map;
+import java.util.HashMap;
 
 import java.util.stream.Collectors;
 
@@ -104,4 +101,20 @@ public class MaterialPurchaseService {
         materialPurchaseRepository.deleteById(materialPurchaseId);
     }
 
+    public Map<Integer, LatestMaterialPurchase> getLatestMaterialPurchase() {
+        List<MaterialEntity> materialEntityList = dataService.getMaterials();
+        Map<Integer, LatestMaterialPurchase> materialToLatestPurchase = new HashMap<>();
+        materialEntityList.forEach(materialEntity -> {
+            Optional<MaterialPurchaseEntity> optionalMaterialPurchaseEntity = materialPurchaseRepository
+                    .findTopByMaterialIdOrderByPurchaseDateDesc(materialEntity.getId());
+            if(optionalMaterialPurchaseEntity.isPresent()) {
+                LatestMaterialPurchase latestMaterialPurchase = new LatestMaterialPurchase();
+                BeanUtils.copyProperties(optionalMaterialPurchaseEntity.get(), latestMaterialPurchase);
+                materialToLatestPurchase.put(materialEntity.getId(), latestMaterialPurchase);
+            }
+        });
+
+        return materialToLatestPurchase;
+
+    }
 }

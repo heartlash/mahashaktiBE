@@ -1,8 +1,12 @@
 package com.mahashakti.mahashaktiBE.service;
 
+import com.mahashakti.mahashaktiBE.constants.EggType;
+import com.mahashakti.mahashaktiBE.entities.PaymentsEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
+import com.mahashakti.mahashaktiBE.exception.InvalidDataStateException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
+import com.mahashakti.mahashaktiBE.repository.PaymentsRepository;
 import com.mahashakti.mahashaktiBE.repository.SaleRepository;
 import com.mahashakti.mahashaktiBe.model.Sale;
 import com.mahashakti.mahashaktiBe.model.SaleCredit;
@@ -20,7 +24,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @Service
@@ -31,35 +34,45 @@ public class SaleService {
     private final SaleRepository saleRepository;
     private final DataService dataService;
     private final AnalyticsService analyticsService;
+    private final PaymentsRepository paymentsRepository;
 
-    public List<SaleEntity> getAllSale(Date startDate, Date endDate, Integer vendorId, Boolean paid) {
-        if(Objects.isNull(vendorId) && Objects.isNull(paid)) return saleRepository.findBySaleDateBetweenOrderBySaleDateAsc(startDate, endDate);
+    public List<SaleEntity> getAllSale(Date startDate, Date endDate, Integer vendorId, Boolean paid, Integer eggTypeId) {
+        if(Objects.isNull(vendorId) && Objects.isNull(paid)) {
+            if(Objects.isNull(eggTypeId))
+                return saleRepository.findBySaleDateBetweenOrderBySaleDateAsc(startDate, endDate);
+            else
+                return saleRepository.findBySaleDateBetweenAndEggTypeIdOrderBySaleDateAsc(startDate, endDate, eggTypeId);
+        }
         if(!Objects.isNull(vendorId) && !Objects.isNull(paid))
-            return saleRepository.findBySaleDateBetweenAndVendorIdAndPaidOrderBySaleDateAsc(startDate, endDate, vendorId, paid);
+            return saleRepository.findBySaleDateBetweenAndVendorIdAndPaidAndEggTypeIdOrderBySaleDateAsc(startDate, endDate, vendorId, paid, eggTypeId);
 
-        if(Objects.isNull(vendorId)) return saleRepository.findBySaleDateBetweenAndPaidOrderBySaleDateAsc(startDate, endDate, paid);
-        return saleRepository.findBySaleDateBetweenAndVendorIdOrderBySaleDateAsc(startDate, endDate, vendorId);
+        if(Objects.isNull(vendorId)) return saleRepository.findBySaleDateBetweenAndPaidAndEggTypeIdOrderBySaleDateAsc(startDate, endDate, paid, eggTypeId);
+        return saleRepository.findBySaleDateBetweenAndVendorIdAndEggTypeIdOrderBySaleDateAsc(startDate, endDate, vendorId, eggTypeId);
     }
 
     @Transactional
-    public List<SaleEntity> postSale(List<Sale> sales) {
-        AtomicReference<Integer> totalSoldCount = new AtomicReference<>(0);
-        List<SaleEntity> saleEntityList = sales.stream().map(sale -> {
-            SaleEntity saleEntity = new SaleEntity();
-            BeanUtils.copyProperties(sale, saleEntity);
-            saleEntity.setVendor(dataService.getVendorById(sale.getVendorId()));
-            saleEntity.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
-            totalSoldCount.updateAndGet(v -> v + saleEntity.getSoldCount());
-            return saleEntity;
-        }).toList();
-        analyticsService.decrementEggStockCount(totalSoldCount.get());
-        return saleRepository.saveAll(saleEntityList);
+    public SaleEntity postSale(Sale sale) {
+
+        SaleEntity saleEntity = new SaleEntity();
+        BeanUtils.copyProperties(sale, saleEntity);
+        saleEntity.setVendor(dataService.getVendorById(sale.getVendorId()));
+        saleEntity.setEggType(dataService.getEggTypeById(sale.getEggTypeId()));
+        saleEntity.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
+
+        saleEntity = saleRepository.save(saleEntity);
+        analyticsService.decrementEggStockCount(saleEntity.getSoldCount(), EggType.valueOf(saleEntity.getEggType().getName()));
+
+        if(saleEntity.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+            createRelatedPayment(saleEntity);
+        }
+
+        return saleEntity;
     }
 
     public SaleEntity getSaleById(UUID saleId) {
         Optional<SaleEntity> saleEntityOptional = saleRepository.findById(saleId);
         if(saleEntityOptional.isEmpty())
-            throw new ResourceNotFoundException(String.format("Sale Resource Not Found %s", saleId.toString()));
+            throw new ResourceNotFoundException(String.format("Sale Resource Not Found %s", saleId));
 
         return saleEntityOptional.get();
     }
@@ -69,41 +82,66 @@ public class SaleService {
         if(saleEntityOptionalLatest.isEmpty())
             throw new ResourceNotFoundException("Latest Sale Resource Not Found %s");
 
-        return getAllSale(saleEntityOptionalLatest.get().getSaleDate(), saleEntityOptionalLatest.get().getSaleDate(), null, null);
+        return getAllSale(saleEntityOptionalLatest.get().getSaleDate(), saleEntityOptionalLatest.get().getSaleDate(), null, null, null);
     }
 
 
+    @Transactional
     public SaleEntity putSaleById(UUID saleId, Sale sale) {
 
         if(!saleId.equals(sale.getId()))
             throw new MismatchException("Sale Resource ID Mismatch in Put Request");
 
         SaleEntity saleEntityInDb = getSaleById(saleId);
+
+        String originalPaymentRemarks = saleEntityInDb.getPaymentRemarks();
+        BigDecimal originalPaidAmount = saleEntityInDb.getPaidAmount();
+        Integer originalVendorId = saleEntityInDb.getVendor().getId();
+
         Integer soldCountBefore = saleEntityInDb.getSoldCount();
 
         BeanUtils.copyProperties(sale, saleEntityInDb, "createdBy", "createdAt");
-
+        saleEntityInDb.setEggType(dataService.getEggTypeById(sale.getEggTypeId()));
         saleEntityInDb.setPaid(sale.getAmount().compareTo(sale.getPaidAmount()) > 0 ? Boolean.FALSE : Boolean.TRUE);
 
-        if(!sale.getVendorId().equals(saleEntityInDb.getVendor().getId()))
+        if(!sale.getVendorId().equals(originalVendorId))
             saleEntityInDb.setVendor(dataService.getVendorById(sale.getVendorId()));
 
         SaleEntity saleEntitySaved = saleRepository.save(saleEntityInDb);
 
         if(!saleEntitySaved.getSoldCount().equals(soldCountBefore)) {
-            analyticsService.incrementEggStockCount(soldCountBefore);
-            analyticsService.decrementEggStockCount(saleEntitySaved.getSoldCount());
+            analyticsService.incrementEggStockCount(soldCountBefore, EggType.valueOf((saleEntitySaved.getEggType().getName())));
+            analyticsService.decrementEggStockCount(saleEntitySaved.getSoldCount(), EggType.valueOf(saleEntitySaved.getEggType().getName()));
         }
+
+        // Update payments too, if related data is changed
+        if(!sale.getPaidAmount().equals(originalPaidAmount)
+                || !sale.getPaymentRemarks().equals(originalPaymentRemarks)
+                || !sale.getVendorId().equals(originalVendorId)) {
+            updateRelatedPayment(saleEntitySaved);
+        }
+
         return saleEntitySaved;
     }
 
+    @Transactional
     public void deleteSaleById(UUID saleId) {
+
         SaleEntity saleEntity = getSaleById(saleId);
+
+        if(saleEntity.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+            Optional<PaymentsEntity> paymentsEntityInDbOptional = paymentsRepository.findBySaleId(saleId);
+            if(paymentsEntityInDbOptional.isPresent()) {
+                paymentsRepository.deleteBySaleId(saleId);
+            }
+        }
+
         saleRepository.deleteById(saleId);
-        analyticsService.incrementEggStockCount(saleEntity.getSoldCount());
+        analyticsService.incrementEggStockCount(saleEntity.getSoldCount(), EggType.valueOf(saleEntity.getEggType().getName()));
+
     }
 
-    public List<SaleCredit> getSaleCredits() {
+    public List<SaleCredit> getCredits() {
 
         List<SaleEntity> allCreditSales = saleRepository.findByPaid(Boolean.FALSE);
         if(allCreditSales.isEmpty()) return new ArrayList<>();
@@ -113,7 +151,7 @@ public class SaleService {
         for (SaleEntity sale : allCreditSales) {
             Integer vendorId = sale.getVendor().getId();
             String vendorName = sale.getVendor().getName();
-            BigDecimal amount = sale.getAmount();
+            BigDecimal amount = sale.getAmount().subtract(sale.getPaidAmount());
 
             creditAmountsByVendor.merge(
                     vendorId,
@@ -124,35 +162,49 @@ public class SaleService {
         return new ArrayList<>(creditAmountsByVendor.values());
     }
 
-    @Transactional
-    public void settleVendorCredits(Integer vendorId, BigDecimal settleAmount) {
-        
-        List<SaleEntity> unpaidSales = saleRepository.findByVendorIdAndPaidOrderByCreatedAtAsc(vendorId, Boolean.FALSE);
-        BigDecimal remainingSettleAmount = settleAmount;
+    private void updateRelatedPayment(SaleEntity saleEntity) {
 
-        for (SaleEntity sale : unpaidSales) {
-            BigDecimal saleAmount = sale.getAmount();
+        Optional<PaymentsEntity> paymentsEntityInDbOptional = paymentsRepository.findBySaleId(saleEntity.getId());
 
-            if (remainingSettleAmount.compareTo(BigDecimal.ZERO) <= 0)
-                break;
+        if(paymentsEntityInDbOptional.isPresent()) {
 
-            // Check if the remaining settle amount is greater than or equal to the sale amount
-            if (remainingSettleAmount.compareTo(saleAmount) >= 0) {
-                // Fully settle this sale
-                sale.setPaidAmount(saleAmount); // Set the paid amount to the sale amount
-                sale.setPaid(Boolean.TRUE); // Set the paid amount to the sale amount
-                remainingSettleAmount = remainingSettleAmount.subtract(saleAmount); // Decrease the remaining settle amount
-            } else {
-                // Partially settle this sale
-                BigDecimal newSaleAmount = saleAmount.subtract(remainingSettleAmount);
-                sale.setAmount(newSaleAmount); // Update the sale amount to reflect the partial payment
-                sale.setPaidAmount(remainingSettleAmount); // Set the paid amount
-                remainingSettleAmount = BigDecimal.ZERO; // All settle amount used up
-            }
+            PaymentsEntity paymentsEntityInDb = paymentsEntityInDbOptional.get();
 
-            saleRepository.save(sale);
+            paymentsEntityInDb.setVendor(saleEntity.getVendor());
+            paymentsEntityInDb.setRemarks(saleEntity.getPaymentRemarks());
+            paymentsEntityInDb.setAmount(saleEntity.getPaidAmount());
+            paymentsEntityInDb.setUpdatedBy(saleEntity.getUpdatedBy());
+
+            paymentsRepository.save(paymentsEntityInDb);
+        } else {
+
+            PaymentsEntity paymentsEntity = new PaymentsEntity();
+
+            BeanUtils.copyProperties(saleEntity, paymentsEntity, "updatedBy");
+
+            paymentsEntity.setSale(saleEntity);
+            paymentsEntity.setPaymentDate(new Date());
+            paymentsEntity.setRemarks(saleEntity.getPaymentRemarks());
+            paymentsEntity.setAmount(saleEntity.getPaidAmount());
+            paymentsEntity.setCreatedBy(saleEntity.getUpdatedBy());
+
+            paymentsRepository.save(paymentsEntity);
         }
+    }
 
+    private void createRelatedPayment(SaleEntity saleEntity) {
+
+        PaymentsEntity paymentsEntity = new PaymentsEntity();
+
+        BeanUtils.copyProperties(saleEntity, paymentsEntity);
+
+        paymentsEntity.setSale(saleEntity);
+        paymentsEntity.setPaymentDate(saleEntity.getSaleDate());
+        paymentsEntity.setRemarks(saleEntity.getPaymentRemarks());
+        paymentsEntity.setAmount(saleEntity.getPaidAmount());
+        paymentsEntity.setCreatedBy(saleEntity.getCreatedBy());
+
+        paymentsRepository.save(paymentsEntity);
     }
 
 }

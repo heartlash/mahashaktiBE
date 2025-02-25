@@ -15,6 +15,11 @@ CREATE TABLE materials (
     unit_id INTEGER REFERENCES units(id)
 );
 
+CREATE TABLE egg_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL
+);
+
 CREATE TABLE material_stock (
     material_id INTEGER PRIMARY KEY REFERENCES materials(id),
     quantity DOUBLE PRECISION NOT NULL,
@@ -52,6 +57,18 @@ CREATE TABLE flocks (
     updated_at TIMESTAMP
 );
 
+CREATE TABLE egg_stock (
+    id UUID PRIMARY KEY,
+    egg_type_id INTEGER REFERENCES egg_types(id) NOT NULL,
+    count INTEGER NOT NULL,
+    remarks VARCHAR NOT NULL,
+    date TIMESTAMP NOT NULL,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
 CREATE TABLE production (
     id UUID PRIMARY KEY,
     produced_count INTEGER NOT NULL,
@@ -59,9 +76,9 @@ CREATE TABLE production (
     shed_id INTEGER REFERENCES sheds(id) NOT NULL,
     broken_count INTEGER NOT NULL,
     broken_reason VARCHAR(100) NOT NULL,
+    waste_count INTEGER NOT NULL,
     self_use_count INTEGER NOT NULL,
     gift_count INTEGER NOT NULL,
-    saleable_count INTEGER NOT NULL,
     production_date TIMESTAMP NOT NULL,
     created_by VARCHAR(50),
     updated_by VARCHAR(50),
@@ -71,13 +88,28 @@ CREATE TABLE production (
 
 CREATE TABLE sale (
     id UUID PRIMARY KEY,
+    egg_type_id INTEGER REFERENCES egg_types(id),
     sold_count INTEGER NOT NULL,
     rate DOUBLE PRECISION NOT NULL,
     amount DOUBLE PRECISION NOT NULL,
     paid_amount DOUBLE PRECISION NOT NULL,
+    payment_remarks VARCHAR(50),
     paid BOOLEAN NOT NULL,
     vendor_id INTEGER REFERENCES vendors(id),
     sale_date TIMESTAMP NOT NULL,
+    created_by VARCHAR(50),
+    updated_by VARCHAR(50),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+ 
+CREATE TABLE payments (
+    id UUID PRIMARY KEY,
+    sale_id UUID REFERENCES sale(id),
+    amount DOUBLE PRECISION NOT NULL,
+    vendor_id INTEGER REFERENCES vendors(id),
+    remarks VARCHAR NOT NULL,
+    payment_date TIMESTAMP NOT NULL,
     created_by VARCHAR(50),
     updated_by VARCHAR(50),
     created_at TIMESTAMP,

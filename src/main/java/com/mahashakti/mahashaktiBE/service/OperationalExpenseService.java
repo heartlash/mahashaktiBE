@@ -2,11 +2,12 @@ package com.mahashakti.mahashaktiBE.service;
 
 
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseEntity;
+import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.exception.MahashaktiException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
-import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.OperationalExpenseRepository;
+import com.mahashakti.mahashaktiBe.model.LatestOperationalExpense;
 import com.mahashakti.mahashaktiBe.model.OperationalExpense;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +75,39 @@ public class OperationalExpenseService {
     public void deleteOperationalExpenseById(UUID operationalExpenseId) {
         getOperationalExpenseById(operationalExpenseId);
         operationalExpenseRepository.deleteById(operationalExpenseId);
+    }
+
+    public Map<Integer, LatestOperationalExpense> getLatestOperationalExpense() {
+
+        List<OperationalExpenseItemEntity> operationalExpenseItemEntityList = dataService.getOperationalExpenseItems();
+        
+        Map<Integer, LatestOperationalExpense> operationalExpenseItemToLatestExpense = new HashMap<>();
+        
+        operationalExpenseItemEntityList.forEach(operationalExpenseItemEntity -> {
+            
+            Optional<OperationalExpenseEntity> operationalExpenseEntityOptional = operationalExpenseRepository
+                    .findTopByItemIdOrderByExpenseDateDesc(operationalExpenseItemEntity.getId());
+            
+            if(operationalExpenseEntityOptional.isPresent()) {
+                LatestOperationalExpense latestOperationalExpense = new LatestOperationalExpense();
+                BeanUtils.copyProperties(operationalExpenseEntityOptional.get(), latestOperationalExpense);
+                operationalExpenseItemToLatestExpense.put(operationalExpenseItemEntity.getId(), latestOperationalExpense);
+            }
+
+        });
+
+        return operationalExpenseItemToLatestExpense;
+
+    }
+
+    public List<OperationalExpenseEntity> getOperationalExpenseByItemId(Integer operationalExpenseItemId, Date startDate, Date endDate) {
+       
+        List<OperationalExpenseEntity> operationalExpenseEntityList = operationalExpenseRepository.findByExpenseDateBetweenAndItemId(startDate, endDate, operationalExpenseItemId);
+        
+        if(operationalExpenseEntityList.isEmpty())
+            throw new ResourceNotFoundException(String.format("Operational Expense Resource Not Found with Item Id: %d", operationalExpenseItemId));
+
+        return operationalExpenseEntityList;
     }
 
 }

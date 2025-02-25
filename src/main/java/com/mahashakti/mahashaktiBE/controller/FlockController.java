@@ -10,7 +10,6 @@ import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -25,7 +24,6 @@ public class FlockController implements FlockApi {
     private final FlockService flockService;
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
     public ResponseEntity<MahashaktiResponse> deleteFlockFlockDataId(UUID flockDataId) {
 
         flockService.deleteFlock(flockDataId);
@@ -45,7 +43,6 @@ public class FlockController implements FlockApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
     public ResponseEntity<MahashaktiResponse> getFlockCount() {
         FlockCount flockCount = flockService.getFlockCount();
         MahashaktiResponse mahashaktiResponse
@@ -74,7 +71,6 @@ public class FlockController implements FlockApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
     public ResponseEntity<MahashaktiResponse> postFlock(Flock flock) {
         FlockEntity flockEntity = flockService.addFlock(flock);
 
@@ -85,7 +81,6 @@ public class FlockController implements FlockApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
     public ResponseEntity<MahashaktiResponse> putFlockFlockDataId(UUID flockDataId, Flock flock) {
         FlockEntity flockEntity = flockService.updateFlock(flockDataId, flock);
 

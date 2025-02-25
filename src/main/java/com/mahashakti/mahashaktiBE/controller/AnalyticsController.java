@@ -34,7 +34,7 @@ public class AnalyticsController implements AnalyticsApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);    }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER', 'ROLE_SUPERVISOR', 'ROLE_DOCTOR')")
     public ResponseEntity<MahashaktiResponse> getMaterialStock() {
 
         List<MaterialInStock> materialInStockList = analyticsService.getMaterialInStock();
@@ -56,6 +56,7 @@ public class AnalyticsController implements AnalyticsApi {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity<MahashaktiResponse> getAnalyticsPriceRecommendation() {
         List<PriceRecommendation> priceRecommendationList = analyticsService.getPriceRecommendation();
         MahashaktiResponse mahashaktiResponse

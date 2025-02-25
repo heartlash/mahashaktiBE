@@ -1,9 +1,12 @@
 package com.mahashakti.mahashaktiBE.service;
 
+import com.mahashakti.mahashaktiBE.constants.EggType;
 import com.mahashakti.mahashaktiBE.entities.MaterialPurchaseEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseEntity;
 import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.entities.SaleEntity;
+import com.mahashakti.mahashaktiBE.entities.EggStockEntity;
+import com.mahashakti.mahashaktiBE.repository.EggStockRepository;
 import com.mahashakti.mahashaktiBE.repository.ProductionRepository;
 import com.mahashakti.mahashaktiBE.repository.SaleRepository;
 import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
@@ -27,6 +30,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Objects;
+
 
 @Service
 @Slf4j
@@ -40,11 +47,12 @@ public class AnalyticsService {
     private final DataService dataService;
     private final FlockService flockService;
     private final MaterialStockCalculator materialStockCalculator;
+    private final EggStockRepository eggStockRepository;
 
     private List<PriceRecommendation> cachedPriceRecommendations;
     private LocalDate lastExecutedDate;
 
-    private Integer currentEggStockCount = 0;
+    private final Map<String, Integer> currentEggStockCountMap = new HashMap<>();
 
     public ProjectedProfits getAnalyticsProjectedProfits(Date startDate, Date endDate) {
 
@@ -107,32 +115,67 @@ public class AnalyticsService {
 
     @PostConstruct
     public EggCount getAnalyticsEggStock() {
-        if(currentEggStockCount <= 0) {
+        if(currentEggStockCountMap.isEmpty()) {
+
+            dataService.getEggTypes().forEach(eggTypeEntity -> {
+                Integer eggStockToAccount = eggStockRepository.findByEggTypeId(eggTypeEntity.getId()).stream().mapToInt(EggStockEntity::getCount).sum();
+                currentEggStockCountMap.put(eggTypeEntity.getName(), eggStockToAccount);
+            });
+
             try {
-                Integer saleableProductionCount = productionRepository.findByProductionDateBetweenOrderByProductionDateDesc(
-                                new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
-                        .stream()
-                        .map(ProductionEntity::getSaleableCount)
-                        .reduce(0, Integer::sum);
+                List<ProductionEntity> allProductions = productionRepository.findByProductionDateBetweenOrderByProductionDateDesc(
+                        new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date());
 
-                Integer soldCount = saleRepository.findBySaleDateBetween(
-                                new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date())
-                        .stream().mapToInt(SaleEntity::getSoldCount).sum();
+                Integer gradeAProductionCount = 0;
+                Integer gradeBProductionCount = 0;
 
-                currentEggStockCount = saleableProductionCount - soldCount;
+                for(ProductionEntity productionEntity : allProductions) {
+
+                    gradeAProductionCount += productionEntity.getProducedCount() - productionEntity.getBrokenCount() - productionEntity.getSelfUseCount()
+                            - productionEntity.getGiftCount();
+
+                    gradeBProductionCount += productionEntity.getBrokenCount() - productionEntity.getWasteCount();
+                }
+
+                List<SaleEntity> allSales = saleRepository.findBySaleDateBetween(
+                        new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), new Date());
+
+                Integer gradeASaleCount = 0;
+                Integer gradeBSaleCount = 0;
+
+                for(SaleEntity saleEntity : allSales) {
+                    if(Objects.equals(saleEntity.getEggType().getName(), EggType.GRADE_B.name()))
+                        gradeBSaleCount += saleEntity.getSoldCount();
+                    else
+                        gradeASaleCount += saleEntity.getSoldCount();
+                }
+
+                currentEggStockCountMap.put(EggType.GRADE_A.name(),
+                        currentEggStockCountMap.getOrDefault(EggType.GRADE_A.name(), 0) + gradeAProductionCount - gradeASaleCount);
+                currentEggStockCountMap.put(EggType.GRADE_B.name(),
+                        currentEggStockCountMap.getOrDefault(EggType.GRADE_B.name(), 0) + gradeBProductionCount - gradeBSaleCount);
+
+
             } catch (Exception e) {
                 log.error("Failed to get egg stock: {}", e.toString());
             }
         }
-        return new EggCount(currentEggStockCount);
+        return new EggCount(currentEggStockCountMap.get(EggType.GRADE_A.name()), currentEggStockCountMap.get(EggType.GRADE_B.name()));
     }
 
-    public void incrementEggStockCount(Integer increaseCount) {
-        currentEggStockCount+=increaseCount;
+    public void incrementEggStockCount(Integer increaseCount, EggType eggType) {
+        if(EggType.GRADE_A == eggType)
+            currentEggStockCountMap.put(EggType.GRADE_A.name(), currentEggStockCountMap.get(EggType.GRADE_A.name()) + increaseCount);
+        else
+            currentEggStockCountMap.put(EggType.GRADE_B.name(), currentEggStockCountMap.get(EggType.GRADE_B.name()) + increaseCount);
     }
 
-    public void decrementEggStockCount(Integer decreaseCount) {
-        currentEggStockCount-=decreaseCount;
+    public void decrementEggStockCount(Integer decreaseCount, EggType eggType) {
+        if(EggType.GRADE_A == eggType)
+            currentEggStockCountMap.put(EggType.GRADE_A.name(), currentEggStockCountMap.get(EggType.GRADE_A.name()) - decreaseCount);
+        else
+            currentEggStockCountMap.put(EggType.GRADE_B.name(), currentEggStockCountMap.get(EggType.GRADE_B.name()) - decreaseCount);
+
     }
 
     public List<PriceRecommendation> getPriceRecommendation() {

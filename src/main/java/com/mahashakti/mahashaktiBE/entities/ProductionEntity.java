@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Transient;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -42,14 +43,20 @@ public class ProductionEntity {
     @Column(name = "broken_reason", length = 100, nullable = false)
     private String brokenReason;
 
+    @Column(name = "waste_count", nullable = false)
+    private Integer wasteCount;
+
     @Column(name = "self_use_count", nullable = false)
     private Integer selfUseCount;
 
     @Column(name = "gift_count", nullable = false)
     private Integer giftCount;
 
-    @Column(name = "saleable_count", nullable = false)
-    private Integer saleableCount;
+    @Transient
+    private Integer saleableGradeACount;
+
+    @Transient
+    private Integer saleableGradeBCount;
 
     @Column(name = "production_date", nullable = false)
     private Date productionDate;

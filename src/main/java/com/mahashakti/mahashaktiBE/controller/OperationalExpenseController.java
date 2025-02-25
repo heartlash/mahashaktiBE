@@ -4,6 +4,7 @@ import com.mahashakti.mahashaktiBE.entities.OperationalExpenseEntity;
 import com.mahashakti.mahashaktiBE.service.OperationalExpenseService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.OperationalExpenseApi;
+import com.mahashakti.mahashaktiBe.model.LatestOperationalExpense;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.OperationalExpense;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -74,5 +76,22 @@ public class OperationalExpenseController implements OperationalExpenseApi {
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<MahashaktiResponse> getLatestOperationalExpense() {
+        Map<Integer, LatestOperationalExpense> latestOperationalExpenseMap = operationalExpenseService.getLatestOperationalExpense();
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Latest Operational Expense FETCHED", "SUCCESS", latestOperationalExpenseMap);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getOperationalExpenseOperationalExpenseItemId(Integer operationalExpenseItemId, Date startDate, Date endDate) {
+        List<OperationalExpenseEntity> operationalExpenseEntityList = operationalExpenseService.getOperationalExpenseByItemId(operationalExpenseItemId, startDate, endDate);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Operational Expense FETCHED", "SUCCESS", operationalExpenseEntityList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
 
 }

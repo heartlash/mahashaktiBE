@@ -4,6 +4,7 @@ import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.ShedEntity;
+import com.mahashakti.mahashaktiBE.entities.EggTypeEntity;
 import com.mahashakti.mahashaktiBE.exception.InvalidDataStateException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
@@ -11,10 +12,12 @@ import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
 import com.mahashakti.mahashaktiBE.repository.OperationalExpenseItemRepository;
 import com.mahashakti.mahashaktiBE.repository.ShedsRepository;
 import com.mahashakti.mahashaktiBE.repository.UnitRepository;
+import com.mahashakti.mahashaktiBE.repository.EggTypeRepository;
 import com.mahashakti.mahashaktiBe.model.Material;
 import com.mahashakti.mahashaktiBe.model.OperationalExpenseItem;
 import com.mahashakti.mahashaktiBe.model.Unit;
 import com.mahashakti.mahashaktiBe.model.Shed;
+import com.mahashakti.mahashaktiBe.model.EggType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +35,9 @@ public class AdminService {
     private final OperationalExpenseItemRepository operationalExpenseItemRepository;
     private final ShedsRepository shedsRepository;
     private final FlockService flockService;
+    private final EggTypeRepository eggTypeRepository;
+    private final AnalyticsService analyticsService;
+    private final DataService dataService;
 
 
     public UnitEntity addUnit(Unit unit) {
@@ -172,5 +178,40 @@ public class AdminService {
 
     }
 
+    public EggTypeEntity addEggType(EggType eggType) {
+        EggTypeEntity eggTypeEntity = new EggTypeEntity();
+        BeanUtils.copyProperties(eggType, eggTypeEntity);
+        return eggTypeRepository.save(eggTypeEntity);
+    }
+
+    public EggTypeEntity updateEggType(Integer eggTypeId, EggType eggType) {
+
+        if(!eggTypeId.equals(eggType.getId())) throw new MismatchException("Egg Type ID Mismatch in Put Request");
+
+        Optional<EggTypeEntity> eggTypeEntityOptional = eggTypeRepository.findById(eggTypeId);
+        if(eggTypeEntityOptional.isEmpty())
+            throw new ResourceNotFoundException(String.format("Egg Type Resource Not Found: %d", eggTypeId));
+
+        EggTypeEntity eggTypeEntity = new EggTypeEntity();
+        BeanUtils.copyProperties(eggType, eggTypeEntity);
+        return eggTypeRepository.save(eggTypeEntity);
+    }
+
+    public void deleteEggType(Integer eggTypeId) {
+        // not sure if ever going to delete egg type
+        /*
+        EggTypeEntity eggTypeEntity = dataService.getEggTypeById(eggTypeId);
+        if(eggTypeEntity.getName().equals("GRADE_A"))
+            if(analyticsService.getAnalyticsEggStock().getGRADEA() == 0) {
+            Optional<EggTypekEntity> shedOptional = shedsRepository.findById(shedId);
+            if (shedOptional.isEmpty())
+                throw new ResourceNotFoundException(String.format("Shed Resource Not Found: %d", shedId));
+            shedsRepository.deleteById(shedId);
+        } else {
+            throw new InvalidDataStateException(String.format("Flock count not zero for :%d", shedId));
+        }
+
+         */
+    }
 
 }

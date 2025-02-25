@@ -71,6 +71,7 @@ public class MaterialRestockService {
             materialStockEntity.setQuantity(materialStockEntity.getQuantity()
                     .subtract(materialRestockEntityInDb.getQuantity())
                     .add(materialRestock.getQuantity()));
+            materialStockEntity.setLastRestockQuantity(materialRestock.getQuantity());
         }
 
         BeanUtils.copyProperties(materialRestock, materialRestockEntityInDb, "id", "createdBy", "createdAt");

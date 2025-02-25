@@ -5,6 +5,7 @@ import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
 import com.mahashakti.mahashaktiBE.entities.ShedEntity;
+import com.mahashakti.mahashaktiBE.entities.EggTypeEntity;
 import com.mahashakti.mahashaktiBE.service.DataService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.DataApi;
@@ -152,4 +153,25 @@ public class DataController implements DataApi {
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getEggTypes() {
+        List<EggTypeEntity> eggTypeEntityList = dataService.getEggTypes();
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Egg Types Fetched", "SUCCESS", eggTypeEntityList);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> getEggTypeById(Integer eggTypeId) {
+        EggTypeEntity eggTypeEntity = dataService.getEggTypeById(eggTypeId);
+
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE200", "Egg Type Fetched", "SUCCESS", eggTypeEntity);
+
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+    
 }

@@ -3,6 +3,7 @@ package com.mahashakti.mahashaktiBE.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -40,10 +41,16 @@ public class WebSecurityConfiguration {
                     registry.requestMatchers("/users/**", "/error").permitAll();
                     registry.requestMatchers("/admin/**").hasRole("ADMIN");
                     registry.requestMatchers("/sale/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
-                    registry.requestMatchers("/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
-                    registry.requestMatchers("/analytics/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.POST,"/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.PUT,"/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.DELETE,"/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.GET,"/production/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR", "DOCTOR");
                     registry.requestMatchers("/data/vendors").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
-                    registry.requestMatchers("/flock").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.POST,"/flock/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.PUT,"/flock/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.DELETE,"/flock/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR");
+                    registry.requestMatchers(HttpMethod.GET,"/flock/**").hasAnyRole("ADMIN", "OWNER", "SUPERVISOR", "DOCTOR");
+
                     registry.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

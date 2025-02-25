@@ -20,7 +20,7 @@ public class MyUsersDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<UserEntity> user = userRepository.findByEmail(username);
+        Optional<UserEntity> user = userRepository.findByEmailAndStatus(username, "ACTIVE");
 
         return user.map(userEntity -> User.builder()
                 .username(userEntity.getEmail())

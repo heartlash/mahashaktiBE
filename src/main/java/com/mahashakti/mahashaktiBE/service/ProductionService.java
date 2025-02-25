@@ -1,5 +1,6 @@
 package com.mahashakti.mahashaktiBE.service;
 
+import com.mahashakti.mahashaktiBE.constants.EggType;
 import com.mahashakti.mahashaktiBE.entities.ProductionEntity;
 import com.mahashakti.mahashaktiBE.exception.InvalidDataStateException;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
@@ -31,11 +32,23 @@ public class ProductionService {
     private final MaterialConsumptionService materialConsumptionService;
 
     public List<ProductionEntity> getAllProduction(Date startDate, Date endDate) {
-        return productionRepository.findByProductionDateBetweenOrderByProductionDateDesc(startDate, endDate);
+        List<ProductionEntity> productionEntityList = productionRepository
+                .findByProductionDateBetweenOrderByProductionDateDesc(startDate, endDate)
+                .stream().peek(productionEntity -> {
+                    productionEntity.setSaleableGradeACount(getSaleableGradeAEggCount(productionEntity));
+                    productionEntity.setSaleableGradeBCount(getSaleableGradeBEggCount(productionEntity));
+                }).toList();
+        return productionEntityList;
     }
 
     public List<ProductionEntity> getAllProductionShedId(Date startDate, Date endDate, Integer shedId) {
-        return productionRepository.findByProductionDateBetweenAndShedIdOrderByProductionDateDesc(startDate, endDate, shedId);
+        List<ProductionEntity> productionEntityList = productionRepository
+                .findByProductionDateBetweenAndShedIdOrderByProductionDateDesc(startDate, endDate, shedId)
+                .stream().peek(productionEntity -> {
+            productionEntity.setSaleableGradeACount(getSaleableGradeAEggCount(productionEntity));
+            productionEntity.setSaleableGradeBCount(getSaleableGradeBEggCount(productionEntity));
+        }).toList();
+        return productionEntityList;
     }
 
     public ProductionEntity postProduction(Production production) {
@@ -46,16 +59,22 @@ public class ProductionService {
 
         BeanUtils.copyProperties(production, productionEntity);
 
-        int saleableCount = production.getProducedCount() - production.getBrokenCount() - production.getSelfUseCount()
-                - production.getGiftCount();
+        int saleableGradeACount = getSaleableGradeAEggCount(productionEntity);
 
-        if(saleableCount < 0) throw new InvalidDataStateException(String.format("Saleable count: %d is invalid", saleableCount));
-        productionEntity.setSaleableCount(saleableCount);
+        int saleableGradeBCount = getSaleableGradeBEggCount(productionEntity);
+
+        if(saleableGradeACount < 0 || saleableGradeBCount < 0) throw new InvalidDataStateException("Saleable counts  invalid");
+        
+        productionEntity.setSaleableGradeACount(saleableGradeACount);
+        productionEntity.setSaleableGradeBCount(saleableGradeBCount);
 
         productionEntity.setProductionPercentage(calculateProductionPercentage(production.getProducedCount(), production.getShedId()));
 
         ProductionEntity productionEntitySaved = productionRepository.save(productionEntity);
-        analyticsService.incrementEggStockCount(saleableCount);
+
+        analyticsService.incrementEggStockCount(saleableGradeACount, EggType.GRADE_A);
+        analyticsService.incrementEggStockCount(saleableGradeBCount, EggType.GRADE_B);
+
 
         Map<Integer, Integer> shedToFlock = Collections.singletonMap(
                 production.getShedId(),
@@ -79,9 +98,8 @@ public class ProductionService {
         if(productionEntityOptionalLatest.isEmpty())
             throw new ResourceNotFoundException("Latest Production Resource Not Found %s");
         Date productionDate = productionEntityOptionalLatest.get().getProductionDate();
-        List<ProductionEntity> productionEntityList = productionRepository.findByProductionDate(productionDate);
 
-        return productionEntityList;
+        return productionRepository.findByProductionDate(productionDate);
     }
 
     public ProductionEntity putProductionById(UUID productionId, Production production) {
@@ -90,25 +108,37 @@ public class ProductionService {
             throw new MismatchException("Production Resource ID Mismatch in Put Request");
 
         ProductionEntity productionEntityInDb = getProductionById(productionId);
-        analyticsService.decrementEggStockCount(productionEntityInDb.getSaleableCount());
+
+        analyticsService.decrementEggStockCount(getSaleableGradeAEggCount(productionEntityInDb), EggType.GRADE_A);
+        analyticsService.decrementEggStockCount(getSaleableGradeBEggCount(productionEntityInDb), EggType.GRADE_B);
 
         BeanUtils.copyProperties(production, productionEntityInDb, "createdBy", "createdAt");
 
-        int saleableCount = production.getProducedCount() - production.getBrokenCount() - production.getSelfUseCount()
+        int saleableGradeACount = production.getProducedCount() - production.getBrokenCount() - production.getSelfUseCount()
                 - production.getGiftCount();
 
-        if(saleableCount < 0) throw new InvalidDataStateException(String.format("Saleable count: %d is invalid", saleableCount));
-        productionEntityInDb.setSaleableCount(saleableCount);
+        int saleableGradeBCount = production.getBrokenCount() - production.getWasteCount();
+
+        if(saleableGradeACount < 0 || saleableGradeBCount < 0) throw new InvalidDataStateException("Saleable count is invalid");
+        
+        productionEntityInDb.setSaleableGradeACount(saleableGradeACount);
+        productionEntityInDb.setSaleableGradeBCount(saleableGradeBCount);
 
         productionEntityInDb.setProductionPercentage(calculateProductionPercentage(production.getProducedCount(), production.getShedId()));
-        analyticsService.incrementEggStockCount(productionEntityInDb.getSaleableCount());
+
+        analyticsService.incrementEggStockCount(productionEntityInDb.getSaleableGradeACount(), EggType.GRADE_A);
+        analyticsService.incrementEggStockCount(productionEntityInDb.getSaleableGradeBCount(), EggType.GRADE_B);
+
 
         return productionRepository.save(productionEntityInDb);
     }
 
     public void deleteProductionById(UUID productionId) {
         ProductionEntity productionEntity = getProductionById(productionId);
-        analyticsService.decrementEggStockCount(productionEntity.getSaleableCount());
+
+        analyticsService.decrementEggStockCount(getSaleableGradeAEggCount(productionEntity), EggType.GRADE_A);
+        analyticsService.decrementEggStockCount(getSaleableGradeBEggCount(productionEntity), EggType.GRADE_B);
+
         productionRepository.deleteById(productionId);
         materialConsumptionService.deleteMaterialConsumptionByConsumptionDate(productionEntity.getShedId(), productionEntity.getProductionDate());
     }
@@ -119,6 +149,17 @@ public class ProductionService {
 
         BigDecimal result = producedCountDecimal.divide(flockCountDecimal, 4, RoundingMode.DOWN);
         return result.multiply(new BigDecimal(100)).setScale(2, RoundingMode.DOWN);
+    }
+
+    public Integer getSaleableGradeAEggCount(ProductionEntity productionEntity) {
+        return productionEntity.getProducedCount() - productionEntity.getBrokenCount() - productionEntity.getSelfUseCount()
+                - productionEntity.getGiftCount();
+
+    }
+
+    public Integer getSaleableGradeBEggCount(ProductionEntity productionEntity) {
+        return productionEntity.getBrokenCount() - productionEntity.getWasteCount();
+
     }
 
 }

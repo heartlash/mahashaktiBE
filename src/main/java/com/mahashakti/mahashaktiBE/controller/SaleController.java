@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +24,8 @@ public class SaleController implements SaleApi {
     private final SaleService saleService;
 
     @Override
-    public ResponseEntity<MahashaktiResponse> getSale(Date startDate, Date endDate, Integer vendorId, Boolean paid) {
-        List<SaleEntity> saleEntityList = saleService.getAllSale(startDate, endDate, vendorId, paid);
+    public ResponseEntity<MahashaktiResponse> getSale(Date startDate, Date endDate, Integer vendorId, Boolean paid, Integer eggTypeId) {
+        List<SaleEntity> saleEntityList = saleService.getAllSale(startDate, endDate, vendorId, paid, eggTypeId);
 
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Sale FETCHED", "SUCCESS", saleEntityList);
@@ -35,13 +34,14 @@ public class SaleController implements SaleApi {
     }
 
     @Override
-    public ResponseEntity<MahashaktiResponse> postSale(List<Sale> sale) {
-        List<SaleEntity> saleEntityList = saleService.postSale(sale);
+    public ResponseEntity<MahashaktiResponse> postSale(Sale sale) {
+        SaleEntity saleEntity = saleService.postSale(sale);
 
         MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Sale FETCHED", "SUCCESS", saleEntityList);
+                = Helper.createResponse("MSBE200", "Sale FETCHED", "SUCCESS", saleEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);      }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);      
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> getSaleSaleId(UUID saleId) {
@@ -50,7 +50,8 @@ public class SaleController implements SaleApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Sale FETCHED", "SUCCESS", saleEntity);
 
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);      }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);      
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> putSaleSaleId(UUID saleId, Sale sale) {
@@ -84,21 +85,13 @@ public class SaleController implements SaleApi {
     }
 
     @Override
-    public ResponseEntity<MahashaktiResponse> getSaleCredits() {
-        List<SaleCredit> saleCredits = saleService.getSaleCredits();
+    public ResponseEntity<MahashaktiResponse> getCredits() {
+        List<SaleCredit> saleCredits = saleService.getCredits();
         MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE200", "Sale Credits Fetched", "SUCCESS", saleCredits);
+                = Helper.createResponse("MSBE200", "Credits Fetched", "SUCCESS", saleCredits);
 
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
 
     }
 
-    @Override
-    public ResponseEntity<MahashaktiResponse> postSaleCreditsSettle(Integer vendorId, BigDecimal amount) {
-        saleService.settleVendorCredits(vendorId, amount);
-        MahashaktiResponse mahashaktiResponse
-                = Helper.createResponse("MSBE202", "Sale Credits Settled", "SUCCESS", null);
-
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
-    }
 }

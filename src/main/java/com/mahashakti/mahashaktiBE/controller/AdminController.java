@@ -5,6 +5,7 @@ import com.mahashakti.mahashaktiBE.entities.OperationalExpenseItemEntity;
 import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
 import com.mahashakti.mahashaktiBE.entities.ShedEntity;
+import com.mahashakti.mahashaktiBE.entities.EggTypeEntity;
 import com.mahashakti.mahashaktiBE.service.AdminService;
 import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBe.api.AdminApi;
@@ -14,6 +15,7 @@ import com.mahashakti.mahashaktiBe.model.Unit;
 import com.mahashakti.mahashaktiBe.model.OperationalExpenseItem;
 import com.mahashakti.mahashaktiBe.model.MahashaktiResponse;
 import com.mahashakti.mahashaktiBe.model.Shed;
+import com.mahashakti.mahashaktiBe.model.EggType;
 
 
 import lombok.RequiredArgsConstructor;
@@ -117,7 +119,8 @@ public class AdminController implements AdminApi {
         ShedEntity shedEntity = adminService.updateShed(shedId, shed);
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE202", "Shed UPDATED", "SUCCESS", shedEntity);
-        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);    }
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);
+    }
 
     @Override
     public ResponseEntity<MahashaktiResponse> deleteShed(Integer shedId) {
@@ -125,5 +128,26 @@ public class AdminController implements AdminApi {
         MahashaktiResponse mahashaktiResponse
                 = Helper.createResponse("MSBE200", "Shed DELETED", "SUCCESS", null);
         return new ResponseEntity<>(mahashaktiResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> postEggType(EggType eggType) {
+        EggTypeEntity eggTypeEntity = adminService.addEggType(eggType);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE201", "EggType ADDED", "SUCCESS", eggTypeEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> putEggType(Integer eggTypeId, EggType eggType) {
+        EggTypeEntity eggTypeEntity = adminService.updateEggType(eggTypeId, eggType);
+        MahashaktiResponse mahashaktiResponse
+                = Helper.createResponse("MSBE202", "EggType UPDATED", "SUCCESS", eggTypeEntity);
+        return new ResponseEntity<>(mahashaktiResponse, HttpStatus.ACCEPTED);        
+    }
+
+    @Override
+    public ResponseEntity<MahashaktiResponse> deleteEggType(Integer eggTypeId) {
+        return AdminApi.super.deleteEggType(eggTypeId);
     }
 }

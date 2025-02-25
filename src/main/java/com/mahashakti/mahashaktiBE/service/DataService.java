@@ -6,6 +6,7 @@ import com.mahashakti.mahashaktiBE.entities.UnitEntity;
 import com.mahashakti.mahashaktiBE.entities.VendorEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
 import com.mahashakti.mahashaktiBE.entities.ShedEntity;
+import com.mahashakti.mahashaktiBE.entities.EggTypeEntity;
 import com.mahashakti.mahashaktiBE.exception.MismatchException;
 import com.mahashakti.mahashaktiBE.exception.ResourceNotFoundException;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
@@ -14,6 +15,7 @@ import com.mahashakti.mahashaktiBE.repository.UnitRepository;
 import com.mahashakti.mahashaktiBE.repository.VendorRepository;
 import com.mahashakti.mahashaktiBE.repository.MaterialStockRepository;
 import com.mahashakti.mahashaktiBE.repository.ShedsRepository;
+import com.mahashakti.mahashaktiBE.repository.EggTypeRepository;
 import com.mahashakti.mahashaktiBe.model.Vendor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +34,7 @@ public class DataService {
     private final OperationalExpenseItemRepository operationalExpenseItemRepository;
     private final MaterialStockRepository materialStockRepository;
     private final ShedsRepository shedsRepository;
+    private final EggTypeRepository eggTypeRepository;
 
 
     public List<MaterialEntity> getMaterials() {
@@ -130,6 +133,17 @@ public class DataService {
         if(optionalShedsEntity.isEmpty())
             throw new ResourceNotFoundException("Shed Resource Not Found");
         return optionalShedsEntity.get();
+    }
+
+    public List<EggTypeEntity> getEggTypes() {
+        return eggTypeRepository.findAll();
+    }
+
+    public EggTypeEntity getEggTypeById(Integer eggTypeId) {
+        Optional<EggTypeEntity> optionalEggTypeEntity = eggTypeRepository.findById(eggTypeId);
+        if(optionalEggTypeEntity.isEmpty())
+            throw new ResourceNotFoundException("Egg Type Resource Not Found");
+        return optionalEggTypeEntity.get();
     }
 
 }

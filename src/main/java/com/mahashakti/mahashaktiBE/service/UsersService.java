@@ -58,7 +58,7 @@ public class UsersService {
 
         if(authentication.isAuthenticated()) {
             String generatedToken = jwtService.generateToken(myUsersDetailService.loadUserByUsername(login.getUsername()));
-            UserEntity userEntity = userRepository.findByEmail(login.getUsername()).get();
+            UserEntity userEntity = userRepository.findByEmailAndStatus(login.getUsername(), "ACTIVE").get();
             login.setAccessToken(generatedToken);
             login.setName(userEntity.getName());
             login.setRole(userEntity.getRole());
@@ -108,7 +108,7 @@ public class UsersService {
     }
 
     public UserEntity getUserDetail(String email) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmailAndStatus(email, "ACTIVE");
         if(userEntityOptional.isEmpty()) throw new ResourceNotFoundException("User Not Found");
 
         UserEntity userEntity = userEntityOptional.get();

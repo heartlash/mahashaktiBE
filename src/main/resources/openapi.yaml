@@ -253,6 +253,22 @@ paths:
         id: 1x6asx2vnhcyg
       tags:
         - MaterialPurchase
+  /material/purchase/latest:
+    parameters: []
+    get:
+      summary: Latest material purchase
+      tags:
+        - MaterialPurchase
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-latest-material-purchase
+      x-stoplight:
+        id: ytmc3uwx4kp9e
   '/material/purchase/materialId/{materialId}':
     parameters:
       - schema:
@@ -525,6 +541,23 @@ paths:
       x-stoplight:
         id: 6y8i7cbj1xsqw
     parameters: []
+  /operational-expense/latest:
+    get:
+      summary: Latest operational expense
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-latest-operational-expense
+      tags:
+        - OperationalExpense
+      parameters: []
+      x-stoplight:
+        id: x44giizm5w1ny
+    parameters: []
   '/operational-expense/{OperationalExpenseId}':
     parameters:
       - schema:
@@ -581,6 +614,37 @@ paths:
       operationId: delete-operational-expense-operationalExpenseId
       x-stoplight:
         id: 88dd80qdyk3hp
+  '/operational-expense/itemId/{operationalExpenseItemId}':
+    parameters:
+      - schema:
+          type: integer
+        name: operationalExpenseItemId
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: date
+        in: query
+        name: startDate
+      - schema:
+          type: string
+          format: date
+        in: query
+        name: endDate
+    get:
+      summary: Operational expense by item id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-operational-expense-operationalExpenseItemId
+      tags:
+        - OperationalExpense
+      x-stoplight:
+        id: 5e5b9agfdqdni
   /production:
     get:
       summary: Production
@@ -796,6 +860,10 @@ paths:
             type: boolean
           in: query
           name: paid
+        - schema:
+            type: integer
+          in: query
+          name: eggTypeId
     post:
       summary: Sale
       tags:
@@ -815,57 +883,8 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Sale'
-                x-stoplight:
-                  id: a061lfqna0d5c
+              $ref: '#/components/schemas/Sale'
     parameters: []
-  /sale/credits:
-    get:
-      summary: Sale Credits
-      tags:
-        - Sale
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: get-sale-credits
-      parameters: []
-      x-stoplight:
-        id: rut66ijl0aku7
-    parameters: []
-  /sale/credits/settle:
-    parameters: []
-    post:
-      summary: Settle sale credit
-      tags:
-        - Sale
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-sale-credits-settle
-      x-stoplight:
-        id: tb7gzgyqujds6
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: vendorId
-          required: true
-        - schema:
-            type: number
-          in: query
-          name: amount
-          required: true
   /sale/latest:
     get:
       summary: Sale
@@ -882,6 +901,23 @@ paths:
       parameters: []
       x-stoplight:
         id: 4e71u1sidqcmf
+    parameters: []
+  /sale/credits:
+    get:
+      summary: Credits
+      tags:
+        - Sale
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-credits
+      parameters: []
+      x-stoplight:
+        id: rut66ijl0aku7
     parameters: []
   '/sale/{saleId}':
     parameters:
@@ -1014,6 +1050,297 @@ paths:
         id: 7nse9rjm4ofzu
       parameters: []
     parameters: []
+  /payments:
+    get:
+      summary: Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-all-payments
+      tags:
+        - Payments
+      x-stoplight:
+        id: ffcnctp2rtfxo
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+    parameters: []
+    post:
+      summary: Payment
+      tags:
+        - Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-payment
+      x-stoplight:
+        id: dv8im2pwy4clc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+  '/payments/{paymentId}':
+    get:
+      summary: Payment by Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-payment-by-id
+      tags:
+        - Payments
+      parameters: []
+      x-stoplight:
+        id: 503ufonx299kf
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: paymentId
+        in: path
+        required: true
+    delete:
+      summary: Payment by Id
+      tags:
+        - Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-payments-paymentId
+      x-stoplight:
+        id: e4z95waktnr7z
+    put:
+      summary: Payment by Id
+      tags:
+        - Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-payments-paymentId
+      x-stoplight:
+        id: t2q36jbkthods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+  '/payments/vendor/{vendorId}':
+    get:
+      summary: Payment by Vendor Id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-payment-by-vendorId
+      tags:
+        - Payments
+      parameters:
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: startDate
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: endDate
+      x-stoplight:
+        id: 1sj5jfvybgbot
+    parameters:
+      - schema:
+          type: integer
+        name: vendorId
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: date
+        in: query
+        name: startDate
+      - schema:
+          type: string
+          format: date
+        in: query
+        name: endDate
+  /payments/latest:
+    get:
+      summary: Latest Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-latest-payments
+      tags:
+        - Payments
+      parameters: []
+      x-stoplight:
+        id: ve8swhkjg0d7z
+    parameters: []
+  /payments/populate:
+    parameters: []
+    get:
+      summary: Populate
+      tags:
+        - Payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-payments-populate
+      x-stoplight:
+        id: 7t8xlbhl9ttzr
+  /eggStock:
+    get:
+      summary: All Egg stock data
+      tags:
+        - EggStock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-all-egg-stock
+      parameters: []
+      x-stoplight:
+        id: ncm4sg5aszink
+    post:
+      summary: Egg stock data
+      tags:
+        - EggStock
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-egg-stock
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EggStock'
+      x-stoplight:
+        id: vdr11kqmcgguk
+    parameters: []
+  '/eggStock/{eggStockId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: eggStockId
+        in: path
+        required: true
+    get:
+      summary: Egg Stock data by Id
+      tags:
+        - EggStock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-egg-stock-by-id
+      x-stoplight:
+        id: 71zrctr2tjahl
+    put:
+      summary: Egg Stock data
+      tags:
+        - EggStock
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-eggStock-by-Id
+      requestBody:
+        description: Shared Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EggStock'
+      x-stoplight:
+        id: 8db5iyq1bf4ac
+    delete:
+      summary: Egg Stock data
+      tags:
+        - EggStock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-eggStock-by-Id
+      x-stoplight:
+        id: vjb0lnjbytrxa
+  '/eggStock/type/{eggTypeId}':
+    get:
+      summary: EggStock by eggType
+      tags:
+        - EggStock
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-eggStock-by-eggType
+      x-stoplight:
+        id: uc4uu1y9ffatq
+    parameters:
+      - schema:
+          type: integer
+        name: eggTypeId
+        in: path
+        required: true
   /flock:
     get:
       summary: Flock data
@@ -1097,7 +1424,7 @@ paths:
                 $ref: '#/components/schemas/MahashaktiResponse'
       operationId: get-flock-shed-count
       x-stoplight:
-        id: uc4uu1y9ffatq
+        id: b1d3bnwg8egwu
     parameters:
       - schema:
           type: integer
@@ -1271,67 +1598,6 @@ paths:
             schema:
               type: object
               $ref: '#/components/schemas/Login'
-  /admin/shed:
-    post:
-      summary: add shed
-      tags:
-        - Admin
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: post-shed
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Shed'
-      x-stoplight:
-        id: 2vfjevy8l964x
-    parameters: []
-  '/admin/shed/{shedId}':
-    parameters:
-      - schema:
-          type: integer
-        name: shedId
-        in: path
-        required: true
-    delete:
-      summary: shed
-      tags:
-        - Admin
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: delete-shed
-      x-stoplight:
-        id: phio3gbi26axt
-    put:
-      summary: shed
-      tags:
-        - Admin
-      responses:
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MahashaktiResponse'
-      operationId: put-shed
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Shed'
-      x-stoplight:
-        id: ilh0cv23q6vmp
   /feed/composition:
     get:
       summary: feed composition
@@ -1532,6 +1798,128 @@ paths:
       operationId: get-feed-quantity-shed-shedId
       x-stoplight:
         id: 9dkb7nvos1sar
+  /admin/egg-types:
+    post:
+      summary: add egg type
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-egg-type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EggType'
+      x-stoplight:
+        id: mt1t6yfysoovn
+    parameters: []
+  '/admin/egg-types/{eggTypeId}':
+    parameters:
+      - schema:
+          type: integer
+        name: eggTypeId
+        in: path
+        required: true
+    delete:
+      summary: Egg Type
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-egg-type
+      x-stoplight:
+        id: xabrgeyj74bns
+    put:
+      summary: Egg Type
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-egg-type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EggType'
+      x-stoplight:
+        id: bvn10swb4bghr
+  /admin/shed:
+    post:
+      summary: add shed
+      tags:
+        - Admin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: post-shed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shed'
+      x-stoplight:
+        id: 2vfjevy8l964x
+    parameters: []
+  '/admin/shed/{shedId}':
+    parameters:
+      - schema:
+          type: integer
+        name: shedId
+        in: path
+        required: true
+    delete:
+      summary: shed
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: delete-shed
+      x-stoplight:
+        id: phio3gbi26axt
+    put:
+      summary: shed
+      tags:
+        - Admin
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: put-shed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shed'
+      x-stoplight:
+        id: ilh0cv23q6vmp
   /admin/material:
     post:
       summary: add material
@@ -1715,6 +2103,43 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OperationalExpenseItem'
+  /data/egg-types:
+    get:
+      summary: Egg Types
+      tags:
+        - Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-egg-types
+      x-stoplight:
+        id: 1v19fbt0y0jdu
+    parameters: []
+  '/data/egg-types/{eggTypeId}':
+    get:
+      summary: Egg Type By Id
+      tags:
+        - Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MahashaktiResponse'
+      operationId: get-egg-type-by-id
+      x-stoplight:
+        id: 17mt9kh7tlcll
+    parameters:
+      - schema:
+          type: integer
+        name: eggTypeId
+        in: path
+        required: true
   /data/sheds:
     get:
       summary: Sheds
@@ -2110,9 +2535,10 @@ components:
         id: hpbxoc7m3pvee
       type: object
       required:
+        - eggTypeId
         - soldCount
-        - rate
         - amount
+        - rate
         - paidAmount
         - vendorId
         - saleDate
@@ -2122,20 +2548,24 @@ components:
           x-stoplight:
             id: ryt00m1b8al7w
           format: uuid
+        eggTypeId:
+          type: integer
+          x-stoplight:
+            id: g94uhf4mg1id3
         soldCount:
           type: integer
           x-stoplight:
             id: gfhjyic42nc9w
           minimum: 1
-        rate:
-          type: number
-          x-stoplight:
-            id: 011zffnku9pmu
-          minimum: 1
         amount:
           type: number
           x-stoplight:
             id: 63fgo68synhzo
+          minimum: 1
+        rate:
+          type: number
+          x-stoplight:
+            id: 011zffnku9pmu
           minimum: 1
         paidAmount:
           type: number
@@ -2145,6 +2575,10 @@ components:
           type: boolean
           x-stoplight:
             id: c746nqbm0a09n
+        paymentRemarks:
+          type: string
+          x-stoplight:
+            id: ei9gh3uk7tmee
         vendorId:
           type: integer
           x-stoplight:
@@ -2172,6 +2606,53 @@ components:
           type: string
           x-stoplight:
             id: 0ljyhovun8syl
+          format: date-time
+    Payment:
+      title: Payment
+      x-stoplight:
+        id: libee8pntn9hc
+      type: object
+      required:
+        - amount
+        - paymentDate
+        - remarks
+        - vendorId
+      properties:
+        id:
+          type: string
+          format: uuid
+        saleId:
+          type: string
+          x-stoplight:
+            id: bgqw703giuv6r
+          format: uuid
+        amount:
+          type: number
+          minimum: 1
+          x-stoplight:
+            id: e4bddm5ruaus8
+        paymentDate:
+          type: string
+          x-stoplight:
+            id: w2dyzl08aqvk2
+          format: date
+        remarks:
+          type: string
+          x-stoplight:
+            id: 70tdgbqqysda8
+          minLength: 4
+        vendorId:
+          type: integer
+        createdBy:
+          type: string
+          minLength: 1
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
           format: date-time
     Shed:
       title: Shed
@@ -2203,6 +2684,18 @@ components:
           format: date
           x-stoplight:
             id: 372o5uzu6rlpv
+    EggType:
+      title: EggType
+      x-stoplight:
+        id: v58s78mjc2g16
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
     FeedComposition:
       title: Feed Composition
       x-stoplight:
@@ -2373,6 +2866,8 @@ components:
         - producedCount
         - shedId
         - brokenCount
+        - brokenReason
+        - wasteCount
         - selfUseCount
         - giftCount
         - productionDate
@@ -2401,6 +2896,11 @@ components:
           type: string
           x-stoplight:
             id: ancza80784c16
+        wasteCount:
+          type: integer
+          x-stoplight:
+            id: 0iknt5xlezyt1
+          minimum: 0
         selfUseCount:
           type: integer
           x-stoplight:
@@ -2575,6 +3075,59 @@ components:
           type: number
           x-stoplight:
             id: 9vch6hf8ucr8d
+    LatestMaterialPurchase:
+      title: LatestMaterialPurchase
+      x-stoplight:
+        id: 0nnptht0tm8ma
+      type: object
+      properties:
+        rate:
+          type: number
+          x-stoplight:
+            id: 4cqn7qj3mt932
+        purchaseDate:
+          type: string
+          x-stoplight:
+            id: 28tjqwd61cf1a
+          format: date
+        quantity:
+          type: number
+          x-stoplight:
+            id: xwihl8uyqe6o7
+    LatestOperationalExpense:
+      title: LatestMaterialPurchase
+      x-stoplight:
+        id: 28gvp5fcfv8fg
+      type: object
+      properties:
+        amount:
+          type: number
+          x-stoplight:
+            id: ndh7mm7hjcns9
+        expenseDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: 47wlw461n1rtr
+        remarks:
+          type: string
+          x-stoplight:
+            id: 80e5e49ihnrdr
+    LatestPayments:
+      title: LatestPayments
+      x-stoplight:
+        id: yj9ajvulravx2
+      type: object
+      properties:
+        amount:
+          type: number
+        paymentDate:
+          type: string
+          format: date
+          x-stoplight:
+            id: wugh809cor0pl
+        remarks:
+          type: string
     PriceRecommendation:
       title: PriceRecommendation
       x-stoplight:
@@ -2671,6 +3224,47 @@ components:
           x-stoplight:
             id: yuwnpf7yevqr7
           format: date-time
+    EggStock:
+      title: EggStock
+      x-stoplight:
+        id: urk23vemnjys7
+      type: object
+      required:
+        - eggTypeId
+        - count
+        - added
+        - remarks
+        - date
+        - createdBy
+      properties:
+        id:
+          type: string
+          format: uuid
+        eggTypeId:
+          type: integer
+          x-stoplight:
+            id: oaa8n7dhu3zg6
+        count:
+          type: integer
+          minimum: 0
+        added:
+          type: boolean
+        remarks:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          format: date
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     FlockCount:
       title: FlockCount
       x-stoplight:
@@ -2687,10 +3281,17 @@ components:
         id: 502ht73430jls
       type: object
       required:
-        - count
+        - GRADE_A
+        - GRADE_B
       properties:
-        count:
+        GRADE_A:
           type: integer
+          x-stoplight:
+            id: rqw4pxqh12qfx
+        GRADE_B:
+          type: integer
+          x-stoplight:
+            id: m568x0ilob90c
     MahashaktiResponse:
       title: MahashaktiResponse
       x-stoplight:
