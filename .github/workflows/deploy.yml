@@ -55,5 +55,7 @@ jobs:
             docker pull heartlash/mahashaktibe:latest &&
             docker stop mahashakti-app || true &&
             docker rm mahashakti-app || true &&
-            docker run -d --name mahashakti-app -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 heartlash/mahashaktibe:latest
+            docker run -d --name mahashakti-app -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 \
+              -e DB_URL=${{ secrets.DB_URL }}  -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} heartlash/mahashaktibe:latest
           "
