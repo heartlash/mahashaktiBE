@@ -9,6 +9,7 @@ import com.mahashakti.mahashaktiBE.entities.EggStockEntity;
 import com.mahashakti.mahashaktiBE.repository.EggStockRepository;
 import com.mahashakti.mahashaktiBE.repository.ProductionRepository;
 import com.mahashakti.mahashaktiBE.repository.SaleRepository;
+import com.mahashakti.mahashaktiBE.utils.Helper;
 import com.mahashakti.mahashaktiBE.utils.MaterialStockCalculator;
 import com.mahashakti.mahashaktiBe.model.EggCount;
 import com.mahashakti.mahashaktiBe.model.MaterialInStock;
@@ -185,14 +186,15 @@ public class AnalyticsService {
 
         List<PriceRecommendation> priceRecommendationList = new ArrayList<>();
 
-        List<String> urls = List.of("https://eggrate.in/s/Andhra_Pradesh", "https://eggrate.in/z/Barwala");
+        List<String> urls = List.of("https://todayeggrate.in/andhra-pradesh-egg-rate", "https://todayeggrate.in/barwala-egg-rate");
 
         for (String url : urls) {
             PriceRecommendation priceRecommendation = new PriceRecommendation();
             try {
                 Document doc = Jsoup.connect(url).get();
-                Element priceElement = doc.select("table.table.table-striped.border tbody tr:nth-child(1) td:nth-child(2)").first();
-                String region = url.substring(url.lastIndexOf("/") + 1).replace("_", " ");
+                Element priceElement = doc.select("table tbody tr:nth-child(1) td:nth-child(2)").first();
+                String region = Helper.capitalizeFirstLetter(url.substring(url.lastIndexOf("/") + 1).replace("-", " ")
+                        .replace("egg rate", ""));
 
                 if (priceElement != null) {
                     priceRecommendation.setRegion(region);

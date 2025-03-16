@@ -22,10 +22,10 @@ logging:
     org.springframework.security: INFO
 
 datasource:
-  url: jdbc:postgresql://13.202.82.152:5432/mahashakti
+  url: ${DB_URL}
   driverClassName: org.postgresql.Driver
-  username: msuser
-  password: mspassword
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
   initializationMode: never
   platform: postgres
   dbcp2:
