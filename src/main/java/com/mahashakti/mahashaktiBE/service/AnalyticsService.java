@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -163,6 +164,93 @@ public class AnalyticsService {
         }
         return new EggCount(currentEggStockCountMap.get(EggType.GRADE_A.name()), currentEggStockCountMap.get(EggType.GRADE_B.name()));
     }
+
+ /*
+
+    public EggCount getAnalyticsEggStock() {
+        if(currentEggStockCountMap.isEmpty()) {
+
+            dataService.getEggTypes().forEach(eggTypeEntity -> {
+                Integer eggStockToAccount = eggStockRepository.findByEggTypeId(eggTypeEntity.getId()).stream().mapToInt(EggStockEntity::getCount).sum();
+                currentEggStockCountMap.put(eggTypeEntity.getName(), eggStockToAccount);
+            });
+
+            try {
+
+                Calendar startCalendar = new GregorianCalendar(2025, Calendar.MARCH, 1);
+                Date startDate = startCalendar.getTime();
+
+                Date endDate = new Date();
+                List<Date> dateRange = generateDates(startDate, endDate);
+
+                log.info("See list of dates: {}", dateRange);
+
+                for(Date currentDate: dateRange) {
+
+                    Integer gradeACountConsideration = eggStockRepository.findByEggTypeIdAndDateBetweenOrderByDateDesc(1,  new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), currentDate).stream().mapToInt(EggStockEntity::getCount).sum();
+                    Integer gradeBCountConsideration = eggStockRepository.findByEggTypeIdAndDateBetweenOrderByDateDesc(2,  new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), currentDate).stream().mapToInt(EggStockEntity::getCount).sum();
+
+
+                    List<ProductionEntity> allProductions = productionRepository.findByProductionDateBetweenOrderByProductionDateDesc(
+                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), currentDate);
+
+                    Integer gradeAProductionCount = 0;
+                    Integer gradeBProductionCount = 0;
+
+                    for (ProductionEntity productionEntity : allProductions) {
+
+                        gradeAProductionCount += productionEntity.getProducedCount() - productionEntity.getBrokenCount() - productionEntity.getSelfUseCount()
+                                - productionEntity.getGiftCount();
+
+                        gradeBProductionCount += productionEntity.getBrokenCount() - productionEntity.getWasteCount();
+                    }
+
+                    List<SaleEntity> allSales = saleRepository.findBySaleDateBetween(
+                            new GregorianCalendar(1970, Calendar.JANUARY, 1).getTime(), currentDate);
+
+                    Integer gradeASaleCount = 0;
+                    Integer gradeBSaleCount = 0;
+
+                    for (SaleEntity saleEntity : allSales) {
+                        if (Objects.equals(saleEntity.getEggType().getName(), EggType.GRADE_B.name()))
+                            gradeBSaleCount += saleEntity.getSoldCount();
+                        else
+                            gradeASaleCount += saleEntity.getSoldCount();
+                    }
+
+                    currentEggStockCountMap.put(EggType.GRADE_A.name(),
+                            currentEggStockCountMap.getOrDefault(EggType.GRADE_A.name(), 0) + gradeAProductionCount - gradeASaleCount);
+                    currentEggStockCountMap.put(EggType.GRADE_B.name(),
+                            currentEggStockCountMap.getOrDefault(EggType.GRADE_B.name(), 0) + gradeBProductionCount - gradeBSaleCount);
+
+                    log.info("GRADE A Egg Stock on  {}:     {}", new SimpleDateFormat("MMM dd yyyy").format(currentDate), gradeAProductionCount - gradeASaleCount + gradeACountConsideration);
+                    log.info("GRADE B Egg Stock on  {}:     {}", new SimpleDateFormat("MMM dd yyyy").format(currentDate), gradeBProductionCount - gradeBSaleCount + gradeBCountConsideration);
+                }
+
+
+            } catch (Exception e) {
+                log.error("Failed to get egg stock: {}", e.toString());
+            }
+        }
+        return new EggCount(currentEggStockCountMap.get(EggType.GRADE_A.name()), currentEggStockCountMap.get(EggType.GRADE_B.name()));
+    }
+
+    public static List<Date> generateDates(Date startDate, Date endDate) {
+        List<Date> dates = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (!calendar.getTime().after(endDate)) {
+            dates.add(calendar.getTime());
+            calendar.add(Calendar.DATE, 1); // Increment the date by one day
+        }
+
+        return dates;
+    }
+
+*/
+
 
     public void incrementEggStockCount(Integer increaseCount, EggType eggType) {
         if(EggType.GRADE_A == eggType)

@@ -96,7 +96,7 @@ minimum-stock-days:
     '[LSP]': 7
     '[Salt]': 5
     '[Soda]': 5
-    '[Premix]': 20
+    '[Egg Spur]': 20
     '[Red]': 20
     '[Yellow]': 20
     '[L-Lysine]': 20
@@ -105,14 +105,15 @@ minimum-stock-days:
     '[Choline Chloride 20%]': 20
     '[Layvit Classic]': 20
     '[Tracemin CL]': 20
-    '[NSP zyme -2000]': 20
+    '[Ronozyme Maxlay 200]': 20
     '[Supertase -5000]': 20
     '[Livtax Fort]': 20
     '[Bibantox +]': 20
     '[Acidomix DF]': 20
     '[Natext]': 20
     '[CMP 1]': 20
-    '[Fibosel]': 20
+    '[Virufluza]': 20
     '[Levucell SB]': 20
     '[Hy-D]': 15
     '[Rapigrow]': 15
+    '[Rice Bran Oil]': 20
