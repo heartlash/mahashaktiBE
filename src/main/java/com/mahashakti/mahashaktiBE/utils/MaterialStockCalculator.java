@@ -96,6 +96,8 @@ public  class MaterialStockCalculator {
                 totalFeedForBirdInShed = totalFeedForBirdInShed.multiply(new BigDecimal(1000));
             } else if (materialUnit.equalsIgnoreCase("Tonne")) {
                 materialRatio = feedCompositionEntity.getQuantityPerTonne();
+            } else if (materialUnit.equalsIgnoreCase("Litre")) {
+                materialRatio = feedCompositionEntity.getQuantityPerTonne();
             }
 
             BigDecimal shedDailyExpectedMaterialConsumption = totalFeedForBirdInShed.multiply(materialRatio);
