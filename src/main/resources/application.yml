@@ -24,8 +24,8 @@ logging:
 datasource:
   url: jdbc:postgresql://localhost:5432/mahashakti
   driverClassName: org.postgresql.Driver
-  username: aniket
-  password: admin
+  username: msuser
+  password: mspassword
   initializationMode: never
   platform: postgres
   dbcp2:
@@ -103,17 +103,17 @@ minimum-stock-days:
     '[D.L.Methionine 98%]': 20
     '[L Threonine]': 20
     '[Choline Chloride 20%]': 20
-    '[Layvit Classic]': 20
+    '[Layvit Classic - Rovimix Layer]': 20
     '[Tracemin CL]': 20
     '[Ronozyme Maxlay 200]': 20
     '[Supertase -5000]': 20
-    '[Livtax Fort]': 20
+    '[Livtax Fort - Suprolive]': 20
     '[Bibantox +]': 20
     '[Acidomix DF]': 20
     '[Natext]': 20
     '[CMP 1]': 20
     '[Virufluza]': 20
-    '[Levucell SB]': 20
+    '[Levucell SB - YLEP Pro]': 20
     '[Hy-D]': 15
     '[Rapigrow]': 15
     '[Rice Bran Oil]': 20

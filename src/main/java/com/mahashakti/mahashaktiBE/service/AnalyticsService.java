@@ -167,7 +167,7 @@ public class AnalyticsService {
 
  /*
 
-    public EggCount getAnalyticsEggStock() {
+    public EggCount getEggStockTally() {
         if(currentEggStockCountMap.isEmpty()) {
 
             dataService.getEggTypes().forEach(eggTypeEntity -> {
@@ -177,7 +177,7 @@ public class AnalyticsService {
 
             try {
 
-                Calendar startCalendar = new GregorianCalendar(2025, Calendar.MARCH, 1);
+                Calendar startCalendar = new GregorianCalendar(2025, Calendar.NOVEMBER, 1);
                 Date startDate = startCalendar.getTime();
 
                 Date endDate = new Date();
@@ -223,8 +223,13 @@ public class AnalyticsService {
                     currentEggStockCountMap.put(EggType.GRADE_B.name(),
                             currentEggStockCountMap.getOrDefault(EggType.GRADE_B.name(), 0) + gradeBProductionCount - gradeBSaleCount);
 
-                    log.info("GRADE A Egg Stock on  {}:     {}", new SimpleDateFormat("MMM dd yyyy").format(currentDate), gradeAProductionCount - gradeASaleCount + gradeACountConsideration);
-                    log.info("GRADE B Egg Stock on  {}:     {}", new SimpleDateFormat("MMM dd yyyy").format(currentDate), gradeBProductionCount - gradeBSaleCount + gradeBCountConsideration);
+                    Integer one = (gradeAProductionCount - gradeASaleCount + gradeACountConsideration)/210;
+                    Integer two = (gradeBProductionCount - gradeBSaleCount + gradeBCountConsideration)/210;
+
+                    log.info("GRADE A Egg Stock on  {}:     {} Cartons", new SimpleDateFormat("MMM dd yyyy").format(currentDate), ((gradeAProductionCount - gradeASaleCount + gradeACountConsideration)/210));
+                    log.info("GRADE B Egg Stock on  {}:     {} Cartons", new SimpleDateFormat("MMM dd yyyy").format(currentDate), ((gradeBProductionCount - gradeBSaleCount + gradeBCountConsideration)/210));
+                    log.info("Total Egg Stock on  {}:     {} Cartons", new SimpleDateFormat("MMM dd yyyy").format(currentDate), (one + two));
+
                 }
 
 

@@ -2,10 +2,12 @@ package com.mahashakti.mahashaktiBE.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.mahashakti.mahashaktiBE.config.MinimumStockDaysProperties;
+import com.mahashakti.mahashaktiBE.entities.MaterialEntity;
 import com.mahashakti.mahashaktiBE.entities.MaterialStockEntity;
 import com.mahashakti.mahashaktiBE.entities.FeedCompositionEntity;
 import com.mahashakti.mahashaktiBE.repository.MaterialRepository;
@@ -31,9 +33,9 @@ public  class MaterialStockCalculator {
     @Transactional
     public void updateMinimumStockQuantity(Map<Integer, Integer> shedToFlock) {
 
+        List<MaterialEntity> materialEntityList = materialRepository.findAll();
 
-        materialRepository.findAll().forEach(materialEntity -> {
-
+        for(MaterialEntity materialEntity: materialEntityList) {
             Optional<MaterialStockEntity> materialStockEntityOptional =
                     materialStockRepository.findById(materialEntity.getId());
 
@@ -46,8 +48,7 @@ public  class MaterialStockCalculator {
                 materialStockEntityOptional.get().setMinQuantity(minQuantity);
                 materialStockRepository.save(materialStockEntityOptional.get());
             }
-
-        });
+        }
     }
 
     public Integer stockLastDay(Integer materialId, Map<Integer, Integer> shedToFlock) {

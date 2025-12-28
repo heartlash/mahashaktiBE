@@ -2808,11 +2808,15 @@ components:
         summaryData:
           type: array
           x-stoplight:
-            id: 8ffkjlmbrlwdj
+            id: 0jtn0e7t69o8i
           items:
             x-stoplight:
-              id: dpvlal9960u9i
-            type: string
+              id: nkqm3dcympdkm
+            type: array
+            items:
+              x-stoplight:
+                id: bb0zoa5at2g9j
+              type: string
     SaleCredit:
       title: SaleCredit
       x-stoplight:

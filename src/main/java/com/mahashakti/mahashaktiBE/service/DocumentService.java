@@ -28,7 +28,7 @@ import java.util.List;
 public class DocumentService {
 
     public byte[] generateDocument(String name, String details, List<String> headers, List<List<String>> data,
-                                   List<String> summaryHeaders, List<String> summaryData) {
+                                   List<String> summaryHeaders, List<List<String>> summaryData) {
 
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -90,11 +90,13 @@ public class DocumentService {
                 }
 
                 // Add data to the summary table
-                for (String cellData : summaryData) {
-                    Cell cell = new Cell().add(new Paragraph(cellData).setFontSize(10))
-                            .setTextAlignment(TextAlignment.LEFT)
-                            .setPadding(5);
-                    summaryTable.addCell(cell);
+                for (List<String> row : summaryData) {
+                    for (String cellData : row) {
+                        Cell cell = new Cell().add(new Paragraph(cellData).setFontSize(10))
+                                .setTextAlignment(TextAlignment.LEFT)
+                                .setPadding(5);
+                        summaryTable.addCell(cell);
+                    }
                 }
 
                 // Add summary table to the document
