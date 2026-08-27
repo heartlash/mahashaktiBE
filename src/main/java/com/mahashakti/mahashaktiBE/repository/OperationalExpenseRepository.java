@@ -11,8 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface OperationalExpenseRepository extends JpaRepository<OperationalExpenseEntity, UUID> {
-    List<OperationalExpenseEntity> findByExpenseDateBetween(Date startDate, Date endDate);
-    List<OperationalExpenseEntity> findByExpenseDateBetweenAndCreatedBy(Date startDate, Date endDate, String createdBy);
+    List<OperationalExpenseEntity> findByExpenseDateBetweenOrderByExpenseDateDesc(Date startDate, Date endDate);
+    List<OperationalExpenseEntity> findByExpenseDateBetweenAndCreatedByOrderByExpenseDateDesc(Date startDate, Date endDate, String createdBy);
     Optional<OperationalExpenseEntity> findTopByItemIdOrderByExpenseDateDesc(Integer operationalExpenseItemId);
     List<OperationalExpenseEntity>  findByExpenseDateBetweenAndItemId(Date startDate, Date endDate, Integer operationalExpenseItemId);
 }

@@ -27,8 +27,8 @@ public class OperationalExpenseService {
     private final DataService dataService;
 
     public List<OperationalExpenseEntity> getAllOperationalExpenses(Date startDate, Date endDate, String createdBy) {
-        if(Objects.isNull(createdBy)) return operationalExpenseRepository.findByExpenseDateBetween(startDate, endDate);
-        else return operationalExpenseRepository.findByExpenseDateBetweenAndCreatedBy(startDate, endDate, createdBy);
+        if(Objects.isNull(createdBy)) return operationalExpenseRepository.findByExpenseDateBetweenOrderByExpenseDateDesc(startDate, endDate);
+        else return operationalExpenseRepository.findByExpenseDateBetweenAndCreatedByOrderByExpenseDateDesc(startDate, endDate, createdBy);
     }
 
     public OperationalExpenseEntity getOperationalExpenseById(UUID operationalExpenseId) {
